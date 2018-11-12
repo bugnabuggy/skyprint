@@ -11,5 +11,6 @@ namespace SkyPrint.Services
     {
         OperationResult<OrderInfoDTO> GetInfo(string id);
         OperationResult<OrderImageInfoDTO> GetImage(string id);
+        bool IsOrderExistById(string id);
     }
 }
