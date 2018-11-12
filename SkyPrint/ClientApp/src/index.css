@@ -22,7 +22,7 @@ main {
     overflow: auto;
 }
 
-a, a:link, a:active, a:visited, a:hover {
+.download-file a{
     color: #fff;
     text-decoration: none;
 }
@@ -39,6 +39,7 @@ a, a:link, a:active, a:visited, a:hover {
 
 .number_order {
     margin-top: 0;
+    word-wrap: break-word;
 }
 
 .info_field {
@@ -170,4 +171,9 @@ a, a:link, a:active, a:visited, a:hover {
     display: flex;
     justify-content: space-between;
     height: 50px;
+}
+
+.not_found_page {
+    display: flex;
+    justify-content: center;
 }

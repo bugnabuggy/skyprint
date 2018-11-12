@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-bootstrap';
 import { SplashScreen } from './splashScreenComponent';
 import { MakeEdits } from './modalMakeEditsComponent';
 
@@ -29,7 +30,7 @@ export class InfoField extends React.Component {
     return (
       <div className="info_field">
         <h1 className="number_order">№ ЗАКАЗА: {this.props.order.name}</h1>
-        <p className="bg-success">Статус заказа</p>
+        {this.props.order.hasClientAnswer && <Alert bsStyle="success">{this.props.order.status}</Alert>}
         <p className="notification">Утверждая макет в пучать. Заказчик подтверждает, что вся информация на макете верна, размеры соответствуют требованию заказчика, пожелания к дизайну учтены.</p>
         <p className="notification">После утверждения макета все возможные претензии по поводу содержаний, дизайна, размеров макета от заказчика не принимаются.</p>
         <div>
@@ -47,16 +48,18 @@ export class InfoField extends React.Component {
           }
         </div>
         <div className="o-btn-container">
-          <div
-            name="approve"
-            onClick={this.handleApprove}
-          >
-            <span className="o-btn-success o-btn-info-field">
-              Утвердить в печать
+          {!this.props.order.hasClientAnswer &&
+            <div
+              name="approve"
+              onClick={this.handleApprove}
+            >
+              <span className="o-btn-success o-btn-info-field">
+                Утвердить в печать
             </span>
-          </div>
+            </div>}
           <div
             name="download"
+            className="download-file"
             onClick={this.handleDownload}
           >
             <a
@@ -78,7 +81,9 @@ export class InfoField extends React.Component {
         </div>
         <MakeEdits
           showAmendments={this.props.order.isShowAmendmentsModal}
+          orderId={this.props.orderId}
           closeModal={this.closeAmendments}
+          sendAmendments={this.props.sendAmendments}
         />
       </div>
     );
