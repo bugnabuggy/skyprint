@@ -22,6 +22,7 @@ namespace SkyPrint.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
         public IActionResult GetInfo(string id)
         {
             id = _idHelper.CutIdBeforeFirstLetter(id);
