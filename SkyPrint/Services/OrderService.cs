@@ -35,7 +35,7 @@ namespace SkyPrint.Services
             var result = new OrderInfoDTO()
             {
                 Name = infoData[0],
-                Picture = "api/image?id=" + infoData[0],
+                Picture = $"api/image/{infoData[0]}",
                 Info = infoData[2],
                 Address = infoData[3]
             };
@@ -52,6 +52,11 @@ namespace SkyPrint.Services
                 Messages = new[] { "Order was found" },
                 Data = result
             };
+        }
+
+        public object EditOrder(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public OperationResult<OrderImageInfoDTO> GetImage(string id)
