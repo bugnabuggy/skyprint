@@ -53,7 +53,10 @@ namespace SkyPrint
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            app.UseCors();
+            app.UseCors(opt => opt
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin());
 
             app.UseMvc(routes =>
             {
