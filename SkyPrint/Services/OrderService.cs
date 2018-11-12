@@ -60,10 +60,10 @@ namespace SkyPrint.Services
 
             var info = ParseInfoTxt(dir);
             info = RefactorInfoData(info);
-
             var imageName = info[1];
             var imageType = imageName.Split('.')[1];
-            var data = File.ReadAllBytes($"{dir}" + $"\\{imageName}");
+            //var data = File.ReadAllBytes("D:\\Pictures\\1338411218-2064600-0109746_www.nevseoboi.com.ua.jpg");
+            var data = Convert.FromBase64String(AnswerStab.Maket.ImageContent);
 
             return new OperationResult<OrderImageInfoDTO>()
             {
