@@ -7,9 +7,11 @@ namespace SkyPrint.Models
 {
     public class OrderInfoDTO
     {
-        public string Id { get; set; }
-        public string LayoutImageName { get; set; }
+        public string Name { get; set; }
+        public string Picture { get; set; }
         public string Info { get; set; }
         public string Address { get; set; }
+        public bool HasClientAnswer { get; set; }
+        public string Status { get; set; }
     }
 }
