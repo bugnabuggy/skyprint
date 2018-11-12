@@ -43,7 +43,7 @@ namespace SkyPrint.Services
             if (!string.IsNullOrEmpty(csaData[0]))
             {
                 result.HasClientAnswer = true;
-                result.Status = csaData[0].Split(' ', StringSplitOptions.RemoveEmptyEntries)[0];
+                result.Status = csaData[0];
             }
 
             return new OperationResult<OrderInfoDTO>()
@@ -58,7 +58,7 @@ namespace SkyPrint.Services
         {
             var dir = GetDirectory(id);
 
-            var info = File.ReadAllLines($"{dir}" + "\\info.txt", Encoding.UTF8);
+            var info = ParseInfoTxt(dir);
             info = RefactorInfoData(info);
 
             var imageName = info[1];
