@@ -34,11 +34,8 @@ export const actionCreators = {
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
       });
   },
-  sendAmendmentsAction: (idOrder, message, file) => (dispatch) => {
-    const formData = new FormData();
-    formData.append('Comments', message );
-    formData.append('Image', file );
-    httpPost(orderDataUrl.replace('%id%', idOrder))
+  sendAmendmentsAction: (idOrder, data) => (dispatch) => {
+    httpPost(orderDataUrl.replace('%id%', idOrder), data)
       .then((response) => {
         console.log('response orderDataUrl', response);
         console.log('getDataFromResponse', getDataFromResponse(response));

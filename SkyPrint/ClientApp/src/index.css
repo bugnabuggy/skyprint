@@ -52,7 +52,6 @@ main {
 }
 
 .o-btn-container {
-    height: 60px;
     width: 600px;
     display: flex;
     justify-content: space-between;
@@ -173,7 +172,21 @@ main {
     height: 50px;
 }
 
-.not_found_page {
+.not_found_page, .load-spinner {
     display: flex;
     justify-content: center;
+    align-items: center;
+    width: 800px;
+}
+
+.request-call-input {
+    -webkit-appearance: checkbox;
+}
+
+.request-call {
+    margin-top: 20px;
+}
+
+.request-call input {
+    margin-right: 10px;
 }

@@ -15,42 +15,47 @@ class Main extends React.Component {
     }
   }
   render() {
-    if(this.props.order.isOrderNotFound) {
+    if (this.props.order.isOrderNotFound) {
       return (
-        <OrderNotFound
-          name={this.props.routing.location.search}
-        />
+        <main>
+          <React.Fragment>
+            <Banner />
+            <OrderNotFound
+              name="Данный заказ не найден"
+            />
+          </React.Fragment>
+        </main>
       )
     } else {
-    return (
-      <main>
-        {this.props.routing.location.search ?
-          this.props.order.isLoading ?
-            (
-              <Spinner />
-            )
+      return (
+        <main>
+          <Banner />
+          {this.props.routing.location.search ?
+            this.props.order.isLoading ?
+              (
+                <Spinner />
+              )
+              :
+              (
+                <React.Fragment>
+                  <InfoField
+                    order={this.props.order}
+                    orderId={parsingUrl(this.props.routing.location.search)}
+                    showAmendmentsModalAction={this.props.showAmendmentsModalAction}
+                    sendAmendments={this.props.sendAmendmentsAction}
+                  />
+                </React.Fragment>
+              )
             :
             (
-              <React.Fragment>
-                <Banner />
-                <InfoField
-                  order={this.props.order}
-                  orderId={parsingUrl(this.props.routing.location.search)}
-                  showAmendmentsModalAction={this.props.showAmendmentsModalAction}
-                  sendAmendments={this.props.sendAmendmentsAction}
-                />
-              </React.Fragment>
+              <OrderNotFound
+                name="Заказ не найден"
+              />
             )
-          :
-          (
-            <div>
-              Заказ не найден
-            </div>
-          )
-        }
-      </main>
-    );
-      }
+          }
+        </main>
+      );
+    }
   }
 }
 
