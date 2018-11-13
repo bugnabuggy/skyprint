@@ -25,7 +25,7 @@ namespace SkyPrint.Services
 
         public OperationResult<OrderInfoDTO> GetInfo(string id)
         {
-            var dir = GetDirectory(id);
+            var dir = GetInfoDirectory(id);
 
             var infoData = ParseInfoTxt(dir);
             infoData = RefactorInfoData(infoData);
@@ -67,7 +67,7 @@ namespace SkyPrint.Services
         {
             try
             {
-                var dir = GetDirectory(id);
+                var dir = GetInfoDirectory(id);
 
                 var infoData = ParseInfoTxt(dir);
                 infoData = RefactorInfoData(infoData);
@@ -84,7 +84,7 @@ namespace SkyPrint.Services
                 {
                     return new OperationResult()
                     {
-                        Messages = new []{"There is now file to attach edits"}
+                        Messages = new[] { "There is now file to attach edits" }
                     };
                 }
 
@@ -123,33 +123,57 @@ namespace SkyPrint.Services
 
         public OperationResult<OrderImageInfoDTO> GetImage(string id)
         {
-            var dir = GetDirectory(id);
+            var dir = GetInfoDirectory(id);
 
             var info = ParseInfoTxt(dir);
             info = RefactorInfoData(info);
 
             var imageName = info[1];
-            var imageType = imageName.Split('.')[1];
-            var data = File.ReadAllBytes($"{dir}\\{imageName}");
 
-            return new OperationResult<OrderImageInfoDTO>()
+            if (IsImageExistByInfo(imageName, dir))
             {
-                Success = true,
-                Messages = new[] { "Image was found" },
-                Data = new OrderImageInfoDTO()
+                var imageType = imageName.Split('.')[1];
+                var data = File.ReadAllBytes($"{dir}\\{imageName}");
+
+                return new OperationResult<OrderImageInfoDTO>()
                 {
-                    Image = data,
-                    FileName = imageName,
-                    FileType = $"image/{imageType}",
-                }
-            };
+                    Success = true,
+                    Messages = new[] { "Image was found" },
+                    Data = new OrderImageInfoDTO()
+                    {
+                        Image = data,
+                        FileName = imageName,
+                        FileType = $"image/{imageType}",
+                    }
+                };
+            }
+
+            return new OperationResult<OrderImageInfoDTO>();
         }
 
         public bool IsOrderExistById(string id)
         {
-            var dirs = System.IO.Directory.GetDirectories(_fileHost);
-            
-            if (dirs.Any(x => x.Contains(id)))
+            var dir = System.IO.Directory.GetDirectories(_fileHost)
+                .FirstOrDefault(x => x.Contains(id));
+
+            if (dir != null)
+            {
+                var dirFiles = System.IO.Directory.GetFiles(dir);
+
+                if (dirFiles.Any(x => x == $"{dir}\\info.txt"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsImageExistByInfo(string name, string dir)
+        {
+            var files = System.IO.Directory.GetFiles(dir);
+
+            if (files.Any(x => x == $"{dir}\\{name}"))
             {
                 return true;
             }
@@ -182,7 +206,7 @@ namespace SkyPrint.Services
         private string GetScaDirectory(string directory)
         {
             // TODO: CHANGE FILE FINDING
-            var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("sca"));
+            var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.EndsWith("sca"));
 
             return dir;
         }
@@ -200,14 +224,14 @@ namespace SkyPrint.Services
             for (int i = 0; i < 3; i++)
             {
                 var temp = data[i].Split(new[] { '=' });
-                
-                data[i] =  temp[1];
+
+                data[i] = new String(temp[1].Skip(1).ToArray());
             }
 
             return data;
         }
 
-        private string GetDirectory(string id)
+        private string GetInfoDirectory(string id)
         {
             var dirs = System.IO.Directory.GetDirectories(_fileHost);
 
