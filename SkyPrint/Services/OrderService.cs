@@ -72,10 +72,16 @@ namespace SkyPrint.Services
                 var infoData = ParseInfoTxt(dir);
                 infoData = RefactorInfoData(infoData);
 
-                var filePath = dir + $"\\c_{infoData[1]}";
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                string filePath = "";
+
+                if (item.Image != null)
                 {
-                    await item.Image.CopyToAsync(stream);
+                    filePath = dir + $"\\c_{infoData[1]}";
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await item.Image.CopyToAsync(stream);
+                    }
                 }
 
                 var scaDir = GetScaDirectory(dir);
