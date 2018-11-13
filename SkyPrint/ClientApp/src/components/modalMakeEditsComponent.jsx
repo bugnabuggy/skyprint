@@ -4,20 +4,27 @@ import Modal from 'react-awesome-modal';
 
 export class MakeEdits extends React.Component {
   handleFile = (e) => {
-    console.log(e.target.files[0]);
     this.setState({ file: e.target.files[0] });
   };
   handleText = (e) => {
     this.setState({ text: e.target.value });
   };
+  handleCall = (e) => {
+    this.setState({ call: e.target.checked });
+  };
   handleSend = () => {
-    this.props.sendAmendments(this.props.orderId, this.state.text, this.state.file)
+    const formData = new FormData();
+    formData.append('Comments', this.state.text );
+    formData.append('Image', this.state.file );
+    formData.append('Status', this.state.call ? 3 : 2 );
+    this.props.sendAmendments(this.props.orderId, formData)
   };
   constructor(props) {
     super(props);
     this.state = {
       text: '',
       file: null,
+      call: false,
     };
   }
   render() {
@@ -25,7 +32,7 @@ export class MakeEdits extends React.Component {
       <Modal
         visible={this.props.showAmendments}
         width="500"
-        height="500"
+        height="550"
         effect="fadeInDown"
         onClickAway={this.props.closeModal}
       >
@@ -39,28 +46,38 @@ export class MakeEdits extends React.Component {
               X
             </div>
           </div>
-            <div className="modal-main-container">
-              <textarea
-                className="modal-text-area"
-                onChange={this.handleText}
-              >
-              </textarea>
-              <span>Загрузите файл</span>
-              <input
-                type="file"
-                onChange={this.handleFile}
-              />
+          <div className="modal-main-container">
+            <textarea
+              className="modal-text-area"
+              onChange={this.handleText}
+            >
+            </textarea>
+            <span>Загрузите файл</span>
+            <input
+              type="file"
+              onChange={this.handleFile}
+            />
+            <div className="request-call">
+              <label>
+                <input 
+                  className="request-call-input" 
+                  type="checkbox"
+                  onChange={this.handleCall}
+                />
+                Заказать звонок 
+              </label>
             </div>
-            <div className="modal-footer-container">
-              <Button
-                bsStyle="primary"
-                onClick={this.handleSend}
-                disabled={!this.state.text}
-              >
-                Отправить
+          </div>
+          <div className="modal-footer-container">
+            <Button
+              bsStyle="primary"
+              onClick={this.handleSend}
+              disabled={!this.state.text}
+            >
+              Отправить
               </Button>
-              <Button onClick={this.props.closeModal}>Отменить</Button>
-            </div>
+            <Button onClick={this.props.closeModal}>Отменить</Button>
+          </div>
         </div>
       </Modal>
     );

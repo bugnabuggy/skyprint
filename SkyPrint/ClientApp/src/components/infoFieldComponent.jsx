@@ -8,10 +8,9 @@ export class InfoField extends React.Component {
     this.setState({ showPicture: !this.state.showPicture });
   };
   handleApprove = (event) => {
-    console.log('handleApprove');
-  };
-  handleDownload = (event) => {
-    console.log('handleDownload');
+    const formData = new FormData();
+    formData.append('Status', 1);
+    this.props.sendAmendments(this.props.orderId, formData)
   };
   openAmendments = () => {
     this.props.showAmendmentsModalAction(true);
@@ -60,7 +59,6 @@ export class InfoField extends React.Component {
           <div
             name="download"
             className="download-file"
-            onClick={this.handleDownload}
           >
             <a
               href={this.props.order.picture}
@@ -70,14 +68,14 @@ export class InfoField extends React.Component {
               Скачать файл
             </a>
           </div>
-          <div
+          {this.props.order.status && <div
             name="amendments"
             onClick={this.openAmendments}
           >
             <span className="o-btn-primary o-btn-info-field">
               Внести правки >
             </span>
-          </div>
+          </div>}
         </div>
         <MakeEdits
           showAmendments={this.props.order.isShowAmendmentsModal}
