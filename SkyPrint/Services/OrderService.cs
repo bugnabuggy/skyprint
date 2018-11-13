@@ -2,17 +2,18 @@
 using Microsoft.Extensions.Configuration;
 using SkyPrint.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SkyPrint.Helpers;
+using Microsoft.AspNetCore.Http.Features;
+using System.Text;
 
 namespace SkyPrint.Services
 {
     public class OrderService : IOrderServices
     {
+        private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private IConfiguration _cfg;
         private string _fileHost;
 
@@ -29,9 +30,6 @@ namespace SkyPrint.Services
             var infoData = ParseInfoTxt(dir);
             infoData = RefactorInfoData(infoData);
 
-            var csaData = ParseCsa(dir);
-            csaData = RefactorCsaData(csaData);
-
             var result = new OrderInfoDTO()
             {
                 Name = infoData[0],
@@ -40,10 +38,17 @@ namespace SkyPrint.Services
                 Address = infoData[3]
             };
 
-            if (!string.IsNullOrEmpty(csaData[0]))
+            var scaDir = GetScaDirectory(dir);
+            if (scaDir != null)
             {
-                result.HasClientAnswer = true;
-                result.Status = csaData[0];
+                var scaData = ParseSca(dir);
+                scaData = RefactorScaData(scaData);
+
+                if (!string.IsNullOrEmpty(scaData[0]))
+                {
+                    result.HasClientAnswer = true;
+                    result.Status = scaData[0];
+                }
             }
 
             return new OperationResult<OrderInfoDTO>()
@@ -54,9 +59,52 @@ namespace SkyPrint.Services
             };
         }
 
-        public object EditOrder(string id)
+        public async Task<OperationResult> EditOrder(string id, OrderEditFormDTO item)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var dir = GetDirectory(id);
+
+                var infoData = ParseInfoTxt(dir);
+                infoData = RefactorInfoData(infoData);
+
+                var filePath = dir + $"\\c_{infoData[1]}";
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await item.Image.CopyToAsync(stream);
+                }
+
+                var scaDir = GetScaDirectory(dir);
+
+                if (scaDir == null)
+                {
+                    var dateNow = DateTime.UtcNow;
+
+                    scaDir = dir + "\\" + dateNow.ToString("yyyyMMdd_hh-mm-ss") + ".sca";
+                }
+
+                var content = new[]
+                {
+                    "Ответ = " + Responses.GetResponse(item.Status),
+                    "Файл = " + filePath,
+                    "Комментарий = " + item.Comments
+                };
+
+                System.IO.File.WriteAllLines(scaDir, content);
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult()
+                {
+                    Messages = new[] { $"ERROR: {ex.Message}" }
+                };
+            }
+
+            return new OperationResult()
+            {
+                Success = true,
+                Messages = new[] { "Edits was sended successfully" }
+            };
         }
 
         public OperationResult<OrderImageInfoDTO> GetImage(string id)
@@ -65,10 +113,10 @@ namespace SkyPrint.Services
 
             var info = ParseInfoTxt(dir);
             info = RefactorInfoData(info);
+
             var imageName = info[1];
             var imageType = imageName.Split('.')[1];
-            //var data = File.ReadAllBytes("D:\\Pictures\\1338411218-2064600-0109746_www.nevseoboi.com.ua.jpg");
-            var data = Convert.FromBase64String(AnswerStab.Maket.ImageContent);
+            var data = File.ReadAllBytes($"{dir}\\{imageName}");
 
             return new OperationResult<OrderImageInfoDTO>()
             {
@@ -85,26 +133,19 @@ namespace SkyPrint.Services
 
         public bool IsOrderExistById(string id)
         {
-            //var dirs = System.IO.Directory.GetDirectories(_fileHost);
-            var dirs = new[] { AnswerStab.Directory };
-
+            var dirs = System.IO.Directory.GetDirectories(_fileHost);
+            
             if (dirs.Any(x => x.Contains(id)))
             {
                 return true;
             }
+
             return false;
         }
 
         private string[] ParseInfoTxt(string directory)
         {
-            //var data = File.ReadAllLines($"{directory}" + "\\info.txt", Encoding.UTF8);
-            var data = new[]
-            {
-                "[1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт]",
-                "maket = \"1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт.jpg\"",
-                "dop-infa = \"\"",
-                "adress = \"г. Тюмень, Болтенко Светлана Сергеевна\""
-            };
+            var data = File.ReadAllLines($"{directory}" + "\\info.txt", Encoding.UTF8);
 
             return data;
         }
@@ -120,35 +161,39 @@ namespace SkyPrint.Services
             return data;
         }
 
-        private string[] ParseCsa(string directory)
+        private string GetScaDirectory(string directory)
         {
-            //var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("csa"));
-            //var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
-            var data = new[]
-            {
-                "Ответ = Макет одобрен",
-                "Файл = ",
-                "Комментарий = "
-            };
+            // TODO: CHANGE FILE FINDING
+            var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("sca"));
+
+            return dir;
+        }
+
+        private string[] ParseSca(string directory)
+        {
+            var dir = GetScaDirectory(directory);
+            var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
 
             return data;
         }
 
-        private string[] RefactorCsaData(string[] data)
+        private string[] RefactorScaData(string[] data)
         {
             for (int i = 0; i < 3; i++)
             {
                 var temp = data[i].Split(new[] { '=' });
-                data[i] = temp[1];
+                
+                data[i] =  temp[1];
             }
+
             return data;
         }
 
         private string GetDirectory(string id)
         {
-            //var dirs = System.IO.Directory.GetDirectories(_fileHost);
-            var dirs = new[] { "1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт" };
+            var dirs = System.IO.Directory.GetDirectories(_fileHost);
 
+            // TODO: REFACTOR THIS PIECE OF CRAP
             return dirs.FirstOrDefault(x => x.Contains(id));
         }
     }
