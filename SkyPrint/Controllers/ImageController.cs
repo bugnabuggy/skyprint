@@ -40,7 +40,7 @@ namespace SkyPrint.Controllers
                 return File(result.Data.Image, result.Data.FileType, result.Data.FileName);
             }
 
-            return BadRequest(result);
+            return NotFound("Image wasn`t found");
         }
     }
 }
