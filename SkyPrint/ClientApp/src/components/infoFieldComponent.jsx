@@ -29,6 +29,7 @@ export class InfoField extends React.Component {
     return (
       <div className="info_field">
         <h1 className="number_order">№ ЗАКАЗА: {this.props.order.name}</h1>
+        <h3 className="number_order">Адрес: {this.props.order.address}</h3>
         {this.props.order.hasClientAnswer && <Alert bsStyle="success">{this.props.order.status}</Alert>}
         <p className="notification">Утверждая макет в пучать. Заказчик подтверждает, что вся информация на макете верна, размеры соответствуют требованию заказчика, пожелания к дизайну учтены.</p>
         <p className="notification">После утверждения макета все возможные претензии по поводу содержаний, дизайна, размеров макета от заказчика не принимаются.</p>
@@ -51,6 +52,7 @@ export class InfoField extends React.Component {
             <div
               name="approve"
               onClick={this.handleApprove}
+              className="approve"
             >
               <span className="o-btn-success o-btn-info-field">
                 Утвердить в печать
@@ -68,9 +70,10 @@ export class InfoField extends React.Component {
               Скачать файл
             </a>
           </div>
-          {this.props.order.status && <div
+          {!this.props.order.hasClientAnswer && <div
             name="amendments"
             onClick={this.openAmendments}
+            className="amendments"
           >
             <span className="o-btn-primary o-btn-info-field">
               Внести правки >

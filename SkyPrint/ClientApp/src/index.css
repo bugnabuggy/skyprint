@@ -52,9 +52,34 @@ main {
 }
 
 .o-btn-container {
-    width: 600px;
-    display: flex;
-    justify-content: space-between;
+    margin-bottom: 60px;
+    display: grid;
+    grid-template-rows: [row1] max-content;
+    grid-template-columns: [col1] 200px [col2] 200px [col3] 200px;
+}
+
+.approve {
+    grid-column-start: col1;
+    grid-column-end: col1;
+    grid-row-start: row1;
+    grid-row-end: row1;
+    justify-self: center;
+}
+
+.download-file {
+    grid-column-start: col2;
+    grid-column-end: col2;
+    grid-row-start: row1;
+    grid-row-end: row1;
+    justify-self: center;
+}
+
+.amendments {
+    grid-column-start: col3;
+    grid-column-end: col3;
+    grid-row-start: row1;
+    grid-row-end: row1;
+    justify-self: center;
 }
 
 .o-btn-success {
