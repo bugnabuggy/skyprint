@@ -23,8 +23,6 @@ namespace SkyPrint
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IConfiguration>(Configuration);
-            services.AddSingleton(Configuration.GetSection("AnswerStab").Get<AnswerStab>());
-
             services.AddScoped<IOrderServices, OrderService>();
             services.AddScoped<IIdHelper, IdHelper>();
 

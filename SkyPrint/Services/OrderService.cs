@@ -30,9 +30,6 @@ namespace SkyPrint.Services
             var infoData = ParseInfoTxt(dir);
             infoData = RefactorInfoData(infoData);
 
-            var csaData = ParseCsa(dir);
-            csaData = RefactorCsaData(csaData);
-
             var result = new OrderInfoDTO()
             {
                 Name = infoData[0],
@@ -41,10 +38,17 @@ namespace SkyPrint.Services
                 Address = infoData[3]
             };
 
-            if (!string.IsNullOrEmpty(csaData[0]))
+            var scaDir = GetScaDirectory(dir);
+            if (scaDir != null)
             {
-                result.HasClientAnswer = true;
-                result.Status = csaData[0];
+                var scaData = ParseSca(dir);
+                scaData = RefactorScaData(scaData);
+
+                if (!string.IsNullOrEmpty(scaData[0]))
+                {
+                    result.HasClientAnswer = true;
+                    result.Status = scaData[0];
+                }
             }
 
             return new OperationResult<OrderInfoDTO>()
@@ -70,7 +74,14 @@ namespace SkyPrint.Services
                     await item.Image.CopyToAsync(stream);
                 }
 
-                var csaDir = GetCsaDirectory(dir);
+                var scaDir = GetScaDirectory(dir);
+
+                if (scaDir == null)
+                {
+                    var dateNow = DateTime.UtcNow;
+
+                    scaDir = dir + "\\" + dateNow.ToString("yyyyMMdd_hh-mm-ss") + ".sca";
+                }
 
                 var content = new[]
                 {
@@ -79,7 +90,7 @@ namespace SkyPrint.Services
                     "Комментарий = " + item.Comments
                 };
 
-                System.IO.File.WriteAllLines(csaDir, content);
+                System.IO.File.WriteAllLines(scaDir, content);
             }
             catch (Exception ex)
             {
@@ -122,13 +133,13 @@ namespace SkyPrint.Services
 
         public bool IsOrderExistById(string id)
         {
-            //var dirs = System.IO.Directory.GetDirectories(_fileHost);
-            var dirs = new[] { AnswerStab.Directory };
-
+            var dirs = System.IO.Directory.GetDirectories(_fileHost);
+            
             if (dirs.Any(x => x.Contains(id)))
             {
                 return true;
             }
+
             return false;
         }
 
@@ -150,38 +161,29 @@ namespace SkyPrint.Services
             return data;
         }
 
-        private string GetCsaDirectory(string directory)
+        private string GetScaDirectory(string directory)
         {
             // TODO: CHANGE FILE FINDING
-            var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("csa"));
-
-            if (dir == null)
-            {
-                var dateNow = DateTime.UtcNow;
-
-                dir = directory + "\\" + dateNow.ToString("yyyyMMdd_hh-mm-ss") + ".csa";
-            }
+            var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("sca"));
 
             return dir;
         }
 
-        private string[] ParseCsa(string directory)
+        private string[] ParseSca(string directory)
         {
-            var dir = GetCsaDirectory(directory);
+            var dir = GetScaDirectory(directory);
             var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
 
             return data;
         }
 
-        private string[] RefactorCsaData(string[] data)
+        private string[] RefactorScaData(string[] data)
         {
             for (int i = 0; i < 3; i++)
             {
                 var temp = data[i].Split(new[] { '=' });
                 
-                data[i] = temp[1][0] == ' '
-                    ? temp[1].Skip(1).ToString()
-                    : temp[1];
+                data[i] =  temp[1];
             }
 
             return data;
