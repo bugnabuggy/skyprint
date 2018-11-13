@@ -82,9 +82,10 @@ namespace SkyPrint.Services
 
                 if (scaDir == null)
                 {
-                    var dateNow = DateTime.UtcNow;
-
-                    scaDir = dir + "\\" + dateNow.ToString("yyyyMMdd_hh-mm-ss") + ".sca";
+                    return new OperationResult()
+                    {
+                        Messages = new []{"There is now file to attach edits"}
+                    };
                 }
 
                 var content = new[]
@@ -94,7 +95,14 @@ namespace SkyPrint.Services
                     "Комментарий = " + item.Comments
                 };
 
-                System.IO.File.WriteAllLines(scaDir, content);
+                using (TextWriter fileTW = new StreamWriter(scaDir))
+                {
+                    fileTW.NewLine = "\n";
+                    foreach (string s in content)
+                    {
+                        fileTW.WriteLine(s);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -104,8 +112,10 @@ namespace SkyPrint.Services
                 };
             }
 
+            item.Image = null;
             return new OperationResult()
             {
+                Data = item,
                 Success = true,
                 Messages = new[] { "Edits was sended successfully" }
             };
@@ -160,7 +170,11 @@ namespace SkyPrint.Services
 
             for (int i = 1; i <= 3; i++)
             {
-                data[i] = data[i].Split('\"')[1];
+                var temp = data[i].Split('\"');
+
+                data[i] = temp.Length > 0
+                    ? temp[1]
+                    : null;
             }
             return data;
         }
