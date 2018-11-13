@@ -1,8 +1,5 @@
 ﻿using GeoPing.Core.Models;
 using SkyPrint.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SkyPrint.Services
@@ -12,5 +9,6 @@ namespace SkyPrint.Services
         OperationResult<OrderInfoDTO> GetInfo(string id);
         OperationResult<OrderImageInfoDTO> GetImage(string id);
         bool IsOrderExistById(string id);
+        Task<OperationResult> EditOrder(string id, OrderEditFormDTO item);
     }
 }

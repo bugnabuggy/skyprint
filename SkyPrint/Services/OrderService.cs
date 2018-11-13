@@ -2,17 +2,17 @@
 using Microsoft.Extensions.Configuration;
 using SkyPrint.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SkyPrint.Helpers;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace SkyPrint.Services
 {
     public class OrderService : IOrderServices
     {
+        private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private IConfiguration _cfg;
         private string _fileHost;
 
@@ -54,9 +54,49 @@ namespace SkyPrint.Services
             };
         }
 
-        public object EditOrder(string id)
+        public async Task<OperationResult> EditOrder(string id, OrderEditFormDTO item)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //var dir = GetDirectory(id);
+                var dir = "D:\\test";
+
+                var infoData = ParseInfoTxt(dir);
+                infoData = RefactorInfoData(infoData);
+
+                //
+                infoData[1] = "test.jpeg";
+
+                var filePath = dir + $"\\c_{infoData[1]}";
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await item.Image.CopyToAsync(stream);
+                }
+
+                var csaDir = GetCsaDirectory(dir);
+
+                var content = new[]
+                {
+                    "Ответ = " + Responses.GetResponse(item.Status),
+                    "Файл = " + filePath,
+                    "Комментарий = " + item.Comments
+                };
+
+                System.IO.File.WriteAllLines(csaDir, content);
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult()
+                {
+                    Messages = new[] { "ERROR: " + ex.Message }
+                };
+            }
+
+            return new OperationResult()
+            {
+                Success = true,
+                Messages = new[] { "Edits was sended successfully" }
+            };
         }
 
         public OperationResult<OrderImageInfoDTO> GetImage(string id)
@@ -120,9 +160,24 @@ namespace SkyPrint.Services
             return data;
         }
 
+        private string GetCsaDirectory(string directory)
+        {
+            // TODO: CHANGE FILE FINDING
+            var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("csa"));
+
+            if (dir == null)
+            {
+                var dateNow = DateTime.UtcNow;
+
+                dir = directory + "\\" + dateNow.ToString("yyyyMMdd_hh-mm-ss") + ".csa";
+            }
+
+            return dir;
+        }
+
         private string[] ParseCsa(string directory)
         {
-            //var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("csa"));
+            //var dir = GetCsaDirectory(directory);
             //var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
             var data = new[]
             {
