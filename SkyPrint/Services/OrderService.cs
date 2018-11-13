@@ -35,7 +35,8 @@ namespace SkyPrint.Services
                 Name = infoData[0],
                 Picture = $"api/image/{infoData[0]}",
                 Info = infoData[2],
-                Address = infoData[3]
+                Address = infoData[3],
+                HasClientAnswer = true
             };
 
             var scaDir = GetScaDirectory(dir);
@@ -46,8 +47,11 @@ namespace SkyPrint.Services
 
                 if (!string.IsNullOrEmpty(scaData[0]))
                 {
-                    result.HasClientAnswer = true;
                     result.Status = scaData[0];
+                }
+                else
+                {
+                    result.HasClientAnswer = false;
                 }
             }
 
