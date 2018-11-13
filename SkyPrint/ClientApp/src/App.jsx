@@ -1,14 +1,12 @@
 ﻿import React from 'react';
-import { Route } from 'react-router';
 import Header from './components/headerComponent';
 import Footer from './components/footerComponent';
+import Main from './components/mainComponent';
 
-export default () => (
+export default ( props ) => (
     <React.Fragment>
         <Header />
-        <main>
-            fsdfsdf
-        </main>
+        <Main />
         <Footer />
     </React.Fragment>
 );
