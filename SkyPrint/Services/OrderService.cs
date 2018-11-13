@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SkyPrint.Helpers;
 using Microsoft.AspNetCore.Http.Features;
+using System.Text;
 
 namespace SkyPrint.Services
 {
@@ -58,14 +59,10 @@ namespace SkyPrint.Services
         {
             try
             {
-                //var dir = GetDirectory(id);
-                var dir = "D:\\test";
+                var dir = GetDirectory(id);
 
                 var infoData = ParseInfoTxt(dir);
                 infoData = RefactorInfoData(infoData);
-
-                //
-                infoData[1] = "test.jpeg";
 
                 var filePath = dir + $"\\c_{infoData[1]}";
                 using (var stream = new FileStream(filePath, FileMode.Create))
@@ -88,7 +85,7 @@ namespace SkyPrint.Services
             {
                 return new OperationResult()
                 {
-                    Messages = new[] { "ERROR: " + ex.Message }
+                    Messages = new[] { $"ERROR: {ex.Message}" }
                 };
             }
 
@@ -105,10 +102,10 @@ namespace SkyPrint.Services
 
             var info = ParseInfoTxt(dir);
             info = RefactorInfoData(info);
+
             var imageName = info[1];
             var imageType = imageName.Split('.')[1];
-            //var data = File.ReadAllBytes("D:\\Pictures\\1338411218-2064600-0109746_www.nevseoboi.com.ua.jpg");
-            var data = Convert.FromBase64String(AnswerStab.Maket.ImageContent);
+            var data = File.ReadAllBytes($"{dir}\\{imageName}");
 
             return new OperationResult<OrderImageInfoDTO>()
             {
@@ -137,14 +134,7 @@ namespace SkyPrint.Services
 
         private string[] ParseInfoTxt(string directory)
         {
-            //var data = File.ReadAllLines($"{directory}" + "\\info.txt", Encoding.UTF8);
-            var data = new[]
-            {
-                "[1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт]",
-                "maket = \"1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт.jpg\"",
-                "dop-infa = \"\"",
-                "adress = \"г. Тюмень, Болтенко Светлана Сергеевна\""
-            };
+            var data = File.ReadAllLines($"{directory}" + "\\info.txt", Encoding.UTF8);
 
             return data;
         }
@@ -177,14 +167,8 @@ namespace SkyPrint.Services
 
         private string[] ParseCsa(string directory)
         {
-            //var dir = GetCsaDirectory(directory);
-            //var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
-            var data = new[]
-            {
-                "Ответ = Макет одобрен",
-                "Файл = ",
-                "Комментарий = "
-            };
+            var dir = GetCsaDirectory(directory);
+            var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
 
             return data;
         }
@@ -194,16 +178,20 @@ namespace SkyPrint.Services
             for (int i = 0; i < 3; i++)
             {
                 var temp = data[i].Split(new[] { '=' });
-                data[i] = temp[1];
+                
+                data[i] = temp[1][0] == ' '
+                    ? temp[1].Skip(1).ToString()
+                    : temp[1];
             }
+
             return data;
         }
 
         private string GetDirectory(string id)
         {
-            //var dirs = System.IO.Directory.GetDirectories(_fileHost);
-            var dirs = new[] { "1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт" };
+            var dirs = System.IO.Directory.GetDirectories(_fileHost);
 
+            // TODO: REFACTOR THIS PIECE OF CRAP
             return dirs.FirstOrDefault(x => x.Contains(id));
         }
     }
