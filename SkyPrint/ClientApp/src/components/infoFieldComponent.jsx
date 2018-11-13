@@ -9,7 +9,7 @@ export class InfoField extends React.Component {
   };
   handleApprove = (event) => {
     const formData = new FormData();
-    formData.append('Status', 1);
+    formData.append('Status', 0);
     this.props.sendAmendments(this.props.orderId, formData)
   };
   openAmendments = () => {
