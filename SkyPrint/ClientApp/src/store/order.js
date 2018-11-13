@@ -38,13 +38,16 @@ export const actionCreators = {
   sendAmendmentsAction: (idOrder, data) => (dispatch) => {
     httpPost(orderDataUrl.replace('%id%', idOrder), data)
       .then((response) => {
-        console.log('getDataFromResponse', getDataFromResponse(response));
+        const isShow = false;
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
         dispatch({ type: LOAD_ORDER_DATA, data: getDataFromResponse(response) });
+        dispatch({ type: SHOW_AMENDMENTS_MODAL, isShow });
       })
       .catch((error) => {
         console.log('error', error.message);
+        const isShow = false;
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
+        dispatch({ type: SHOW_AMENDMENTS_MODAL, isShow });
       });
   },
   showAmendmentsModalAction: (isShow) => (dispatch) => {
