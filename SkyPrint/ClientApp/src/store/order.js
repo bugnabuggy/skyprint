@@ -4,7 +4,6 @@ import { getDataFromResponse } from '../service/helper';
 
 const LOAD_ORDER_DATA = 'LOAD_ORDER_DATA';
 const LOADING_ORDER_DATA = 'LOADING_ORDER_DATA';
-const SEND_AMENDMENTS = 'SEND_AMENDMENTS';
 const SHOW_AMENDMENTS_MODAL = 'SHOW_AMENDMENTS_MODAL';
 const ORDER_NOT_FOUND = 'ORDER_NOT_FOUND';
 export const initialStateOrder = {
@@ -28,8 +27,10 @@ export const actionCreators = {
         dispatch({ type: LOAD_ORDER_DATA, data: getDataFromResponse(response) });
       })
       .catch((error) => {
-        if (error.response.status === 404) {
-          dispatch({ type: ORDER_NOT_FOUND, isNotFound: true });
+        if (error.response) {
+          if (error.response.status === 404) {
+            dispatch({ type: ORDER_NOT_FOUND, isNotFound: true });
+          }
         }
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
       });
@@ -37,10 +38,9 @@ export const actionCreators = {
   sendAmendmentsAction: (idOrder, data) => (dispatch) => {
     httpPost(orderDataUrl.replace('%id%', idOrder), data)
       .then((response) => {
-        console.log('response orderDataUrl', response);
         console.log('getDataFromResponse', getDataFromResponse(response));
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
-        dispatch({ type: LOAD_ORDER_DATA });
+        dispatch({ type: LOAD_ORDER_DATA, data: getDataFromResponse(response) });
       })
       .catch((error) => {
         console.log('error', error.message);
@@ -65,13 +65,7 @@ function loadingOrderData(state, action) {
     isLoading: action.isLoading,
   };
 }
-/* */
-function sendAmendments(state, action) {
-  return {
-    ...state,
-  };
-}
-/** */
+
 function showAmendmentsModal(state, action) {
   return {
     ...state,
@@ -90,7 +84,6 @@ export const reducer = (state = initialStateOrder, action) => {
   const reduceObject = {
     [LOAD_ORDER_DATA]: loadOrderData,
     [LOADING_ORDER_DATA]: loadingOrderData,
-    [SEND_AMENDMENTS]: sendAmendments,
     [SHOW_AMENDMENTS_MODAL]: showAmendmentsModal,
     [ORDER_NOT_FOUND]: orderNotFound,
   };
