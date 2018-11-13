@@ -1,7 +1,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { actionCreators } from '../store/Counter';
+import { actionCreators } from '../store/order';
 
 class Footer extends React.Component {
   render() {
@@ -33,6 +33,6 @@ class Footer extends React.Component {
 }
 
 export default connect(
-  state => state.counter,
+  state => state,
   dispatch => bindActionCreators(actionCreators, dispatch)
 )(Footer);
