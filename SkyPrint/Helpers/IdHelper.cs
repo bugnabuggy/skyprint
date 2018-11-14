@@ -9,6 +9,7 @@ namespace SkyPrint.Helpers
 {
     public class IdHelper: IIdHelper
     {
+        // Returns cutted before non-allowed char part of recieved "id"
         public string CutIdBeforeFirstLetter(string id)
         {
             var allowedChars = GetNumbers().Concat(GetSymbols());
@@ -25,6 +26,7 @@ namespace SkyPrint.Helpers
             return result;
         }
 
+        // Array of allowed numbers
         private IEnumerable<char> GetNumbers()
         {
             ICollection<char> data = new List<char>();
@@ -36,6 +38,7 @@ namespace SkyPrint.Helpers
             return data;
         }
 
+        // Array of allowed symbols
         private IEnumerable<char> GetSymbols()
         {
             ICollection<char> data = new List<char>()

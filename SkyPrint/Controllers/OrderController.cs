@@ -21,6 +21,8 @@ namespace SkyPrint.Controllers
             _idHelper = idHelper;
         }
 
+        // GET api/order/{id}
+        // Returns info about order if id is right
         [HttpGet]
         [Route("{id}")]
         public IActionResult GetInfo(string id)
@@ -42,6 +44,8 @@ namespace SkyPrint.Controllers
             return BadRequest(result);
         }
 
+        // POST api/order/{id}
+        // Adds info about client wishes
         [HttpPost]
         [Route("{id}")]
         public async Task<IActionResult> AddOrderEditsAsync(string id, [FromForm]OrderEditFormDTO item)
