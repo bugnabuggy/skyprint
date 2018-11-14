@@ -22,6 +22,8 @@ namespace SkyPrint.Controllers
             _idHelper = idHelper;
         }
 
+        // GET api/image/{id}
+        // Returns model image of order
         [HttpGet]
         [Route("{id}")]
         public IActionResult GetOrderImage(string id)

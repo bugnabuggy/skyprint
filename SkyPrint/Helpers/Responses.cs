@@ -7,7 +7,7 @@ namespace SkyPrint.Helpers
 {
     public class Responses
     {
-        private static string[] responses = 
+        private static readonly string[] _responses = 
         {
             "Макет одобрен",
             "Правка",
@@ -16,7 +16,7 @@ namespace SkyPrint.Helpers
 
         public static string GetResponse(int id)
         {
-            return responses[id];
+            return _responses[id];
         }
     }
 }

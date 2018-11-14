@@ -28,7 +28,7 @@ namespace SkyPrint.Services
 
         public OperationResult<OrderInfoDTO> GetInfo(string id)
         {
-            var dir = GetInfoDirectory(id);
+            var dir = GetOrderDirectory(id);
 
             var infoData = ParseInfoTxt(dir);
             infoData = RefactorInfoData(infoData);
@@ -45,7 +45,7 @@ namespace SkyPrint.Services
 
         public async Task<OperationResult> EditOrder(string id, OrderEditFormDTO item)
         {
-            var dir = GetInfoDirectory(id);
+            var dir = GetOrderDirectory(id);
 
             var infoData = ParseInfoTxt(dir);
             infoData = RefactorInfoData(infoData);
@@ -108,7 +108,7 @@ namespace SkyPrint.Services
 
         public OperationResult<OrderImageInfoDTO> GetImage(string id)
         {
-            var dir = GetInfoDirectory(id);
+            var dir = GetOrderDirectory(id);
 
             var info = ParseInfoTxt(dir);
             info = RefactorInfoData(info);
@@ -136,9 +136,10 @@ namespace SkyPrint.Services
             return new OperationResult<OrderImageInfoDTO>();
         }
 
+        // Checks if there is an order catalog and order info in host catalog by recieved id
         public bool IsOrderExistById(string id)
         {
-            var dir = GetInfoDirectory(id);
+            var dir = GetOrderDirectory(id);
 
             if (dir != null)
             {
@@ -153,6 +154,7 @@ namespace SkyPrint.Services
             return false;
         }
 
+        // Checks if there is an image in pointed catalog with recieved name
         public bool IsImageExistByInfo(string name, string dir)
         {
             var files = System.IO.Directory.GetFiles(dir);
@@ -165,6 +167,7 @@ namespace SkyPrint.Services
             return false;
         }
 
+        // Returns OrderInfoDTO based by content of info.txt and *.sca 
         private OrderInfoDTO GetInfoDTO(string[] infoData,  string directory)
         {
             var result = new OrderInfoDTO()
@@ -195,6 +198,7 @@ namespace SkyPrint.Services
             return result;
         }
 
+        // Parses a info.txt founded in order directory to string array
         private string[] ParseInfoTxt(string directory)
         {
             var data = File.ReadAllLines($"{directory}" + "\\info.txt", Encoding.UTF8);
@@ -202,6 +206,7 @@ namespace SkyPrint.Services
             return data;
         }
 
+        // Cleans infoData from waste data
         private string[] RefactorInfoData(string[] data)
         {
             data[0] = data[0].Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries)[0];
@@ -217,6 +222,7 @@ namespace SkyPrint.Services
             return data;
         }
 
+        // Returns full path to *.sca file (or null if it doesn`t exist)
         private string GetScaDirectory(string directory)
         {
             // TODO: CHANGE FILE FINDING
@@ -225,6 +231,7 @@ namespace SkyPrint.Services
             return dir;
         }
 
+        // Parses a *.sca founded in order directory to string array
         private string[] ParseSca(string directory)
         {
             var dir = GetScaDirectory(directory);
@@ -233,6 +240,7 @@ namespace SkyPrint.Services
             return data;
         }
 
+        // Cleans scaData from waste data
         private string[] RefactorScaData(string[] data)
         {
             for (int i = 0; i < 3; i++)
@@ -245,7 +253,8 @@ namespace SkyPrint.Services
             return data;
         }
 
-        private string GetInfoDirectory(string id)
+        // Returns an order directory in the host directory by recieved id
+        private string GetOrderDirectory(string id)
         {
             var dirs = System.IO.Directory.GetDirectories(_fileHost);
 
