@@ -1,5 +1,13 @@
 export function parsingUrl(url) {
-  return url.split('&')[1].split('=')[1];
+  const tempArray = url.split('&');
+  let idOrder = 'fg4h5';
+  tempArray.forEach( item => {
+    if (item.indexOf('zakaz') >= 0)
+    {
+      idOrder = item.split('=')[1];
+    }
+  });
+  return idOrder;
 }
 
 export function getDataFromResponse( response ) {
