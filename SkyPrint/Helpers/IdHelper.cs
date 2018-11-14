@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace SkyPrint.Helpers
 {
@@ -10,16 +12,17 @@ namespace SkyPrint.Helpers
         public string CutIdBeforeFirstLetter(string id)
         {
             var allowedChars = GetNumbers().Concat(GetSymbols());
-            var length = id.Length;
 
-            for (int i = 0; i < length; i++)
+            int cutPos = 0;
+
+            while (allowedChars.Any(x => x == id[cutPos]))
             {
-                if (!allowedChars.Contains(id[i]))
-                {
-                    return new string(id.Take(i).ToArray()); 
-                }
+                cutPos++;
             }
-            return id;
+
+            var result = new string(id.SkipLast(id.Length - cutPos).ToArray());
+
+            return result;
         }
 
         private IEnumerable<char> GetNumbers()
