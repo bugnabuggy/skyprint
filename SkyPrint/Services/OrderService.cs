@@ -15,11 +15,14 @@ namespace SkyPrint.Services
     {
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private IConfiguration _cfg;
+        private IIdHelper _idHelper;
         private string _fileHost;
 
-        public OrderService(IConfiguration cfg)
+        public OrderService(IConfiguration cfg,
+                            IIdHelper idHelper)
         {
             _cfg = cfg;
+            _idHelper = idHelper;
             _fileHost = _cfg.GetValue<string>("FileHost");
         }
 
@@ -135,8 +138,7 @@ namespace SkyPrint.Services
 
         public bool IsOrderExistById(string id)
         {
-            var dir = System.IO.Directory.GetDirectories(_fileHost)
-                .FirstOrDefault(x => x.Contains(id));
+            var dir = GetInfoDirectory(id);
 
             if (dir != null)
             {
@@ -247,8 +249,12 @@ namespace SkyPrint.Services
         {
             var dirs = System.IO.Directory.GetDirectories(_fileHost);
 
-            // TODO: REFACTOR THIS PIECE OF CRAP
-            return dirs.FirstOrDefault(x => x.Contains(id));
+            var dir = dirs.FirstOrDefault(x => id.Equals
+            (
+                _idHelper.CutIdBeforeFirstLetter(new String(x.Skip(_fileHost.Length + 1).ToArray()))
+            ));
+
+            return dir;
         }
     }
 }
