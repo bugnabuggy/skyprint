@@ -53,12 +53,6 @@ namespace SkyPrint.Controllers
                 return NotFound("Order not found");
             }
 
-            if (string.IsNullOrEmpty(item.Image.FileName) ||
-                item.Image.Length <= 0)
-            {
-                return BadRequest("Loaded file is empty or invalid");
-            }
-
             var result = await _orderSrv.EditOrder(id, item);
 
             if (result.Success)

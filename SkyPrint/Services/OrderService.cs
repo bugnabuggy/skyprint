@@ -30,30 +30,7 @@ namespace SkyPrint.Services
             var infoData = ParseInfoTxt(dir);
             infoData = RefactorInfoData(infoData);
 
-            var result = new OrderInfoDTO()
-            {
-                Name = infoData[0],
-                Picture = $"api/image/{infoData[0]}",
-                Info = infoData[2],
-                Address = infoData[3],
-                HasClientAnswer = true
-            };
-
-            var scaDir = GetScaDirectory(dir);
-            if (scaDir != null)
-            {
-                var scaData = ParseSca(dir);
-                scaData = RefactorScaData(scaData);
-
-                if (!string.IsNullOrEmpty(scaData[0]))
-                {
-                    result.Status = scaData[0];
-                }
-                else
-                {
-                    result.HasClientAnswer = false;
-                }
-            }
+            var result = GetInfoDTO(infoData, dir);
 
             return new OperationResult<OrderInfoDTO>()
             {
@@ -65,17 +42,23 @@ namespace SkyPrint.Services
 
         public async Task<OperationResult> EditOrder(string id, OrderEditFormDTO item)
         {
+            var dir = GetInfoDirectory(id);
+
+            var infoData = ParseInfoTxt(dir);
+            infoData = RefactorInfoData(infoData);
+
             try
             {
-                var dir = GetInfoDirectory(id);
+                string filePath = "";
 
-                var infoData = ParseInfoTxt(dir);
-                infoData = RefactorInfoData(infoData);
-
-                var filePath = dir + $"\\c_{infoData[1]}";
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                if (item.Image != null)
                 {
-                    await item.Image.CopyToAsync(stream);
+                    filePath = dir + $"\\c_{infoData[1]}";
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await item.Image.CopyToAsync(stream);
+                    }
                 }
 
                 var scaDir = GetScaDirectory(dir);
@@ -112,10 +95,9 @@ namespace SkyPrint.Services
                 };
             }
 
-            item.Image = null;
             return new OperationResult()
             {
-                Data = item,
+                Data = GetInfoDTO(infoData, dir),
                 Success = true,
                 Messages = new[] { "Edits was sended successfully" }
             };
@@ -179,6 +161,36 @@ namespace SkyPrint.Services
             }
 
             return false;
+        }
+
+        private OrderInfoDTO GetInfoDTO(string[] infoData,  string directory)
+        {
+            var result = new OrderInfoDTO()
+            {
+                Name = infoData[0],
+                Picture = $"api/image/{infoData[0]}",
+                Info = infoData[2],
+                Address = infoData[3],
+                HasClientAnswer = true
+            };
+
+            var scaDir = GetScaDirectory(directory);
+            if (scaDir != null)
+            {
+                var scaData = ParseSca(directory);
+                scaData = RefactorScaData(scaData);
+
+                if (!string.IsNullOrEmpty(scaData[0]))
+                {
+                    result.Status = scaData[0];
+                }
+                else
+                {
+                    result.HasClientAnswer = false;
+                }
+            }
+
+            return result;
         }
 
         private string[] ParseInfoTxt(string directory)
