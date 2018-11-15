@@ -7,6 +7,6 @@ export default ( props ) => (
     <React.Fragment>
         <Header />
         <Main />
-        <Footer />
+        {/* <Footer /> */}
     </React.Fragment>
 );

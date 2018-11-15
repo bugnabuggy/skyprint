@@ -8,30 +8,11 @@ class Header extends React.Component {
     return (
       <header className="header-wrap clearfix">
         <div className="header-heads">
-          <div className="wrapper">
+          <div className="wrapper header-logo-container">
             <div className="header-logo">
               <a href="http://499363.ru/">
-                <img src="http://499363.ru/wp-content/themes/skyprint/_img/logo.png" alt="" />
+                <img src="/Logo.png" alt="" />
               </a>
-            </div>
-            <div
-              className="smart-btn-header-nav"
-              id="btn-js-smart-menu"
-              data-nav-toggle="smart-header-nav-show"
-            >
-              <span className="icon-btn-header-nav"></span>
-            </div>
-            <div className="header-contact-block type-tel">
-              <p>
-                <a href="tel:88005509163,8(3812)499363">8 800 550-91-63, 8 (3812) 499-363</a>
-              </p>
-              <p>Бесплатные звонки по РФ</p>
-              <span className="ics ic-header-tel"></span>
-            </div>
-            <div className="header-contact-block type-addr">
-              <p>Ильинская 4, офис 61</p>
-              <p>работаем с 9:00 до 18:00</p>
-              <span className="ics ic-header-addr"></span>
             </div>
           </div>
         </div>
