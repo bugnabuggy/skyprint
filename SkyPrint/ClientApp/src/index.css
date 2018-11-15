@@ -9,15 +9,14 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     min-height: max-content;
 }
 
 main {
     display: flex;
     justify-content: center;
-    margin-bottom: 40px;
-    margin-top: 40px;
+    margin-bottom: 190px;
+    margin-top: 70px;
     min-width: 1000px;
     overflow: auto;
 }
@@ -27,23 +26,31 @@ main {
     text-decoration: none;
 }
 
-.banner {
-    width: 200px;
-    height: 500px;
-    background-color: #f1f1f1;
+.banner, .arrow-container {
+    width: 276px;
+    height: 695px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 30px;
+    margin-right: 20px;
+}
+
+.banner {
+    background-color: #f1f1f1;
 }
 
 .number_order {
     margin-top: 0;
+    margin-bottom: 40px;
     word-wrap: break-word;
 }
 
 .info_field {
-    width: 800px;
+    width: 449px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .notification {
@@ -52,13 +59,21 @@ main {
 }
 
 .o-btn-container {
-    margin-bottom: 60px;
     display: grid;
     grid-template-rows: [row1] max-content;
-    grid-template-columns: [col1] 200px [col2] 200px [col3] 200px;
+    grid-template-columns: [col1] max-content [col2] max-content [col3] max-content;
+    margin-bottom: 5px;
 }
 
 .approve {
+    grid-column-start: col3;
+    grid-column-end: col3;
+    grid-row-start: row1;
+    grid-row-end: row1;
+    justify-self: center;
+}
+
+.download-file {
     grid-column-start: col1;
     grid-column-end: col1;
     grid-row-start: row1;
@@ -66,17 +81,9 @@ main {
     justify-self: center;
 }
 
-.download-file {
+.amendments {
     grid-column-start: col2;
     grid-column-end: col2;
-    grid-row-start: row1;
-    grid-row-end: row1;
-    justify-self: center;
-}
-
-.amendments {
-    grid-column-start: col3;
-    grid-column-end: col3;
     grid-row-start: row1;
     grid-row-end: row1;
     justify-self: center;
@@ -91,7 +98,7 @@ main {
 }
 
 .o-btn-info-field {
-    min-width: 132px;
+    min-width: 128px;
     padding: 10px 20px 10px 20px;
     display: inline-block;
     vertical-align: top;
@@ -99,20 +106,21 @@ main {
     overflow: hidden;
     font-weight: 600;
     line-height: 1.2;
-    font-size: 14px;
+    font-size: 12px;
     color: #fff;
     text-align: center;
     cursor: pointer;
+    margin-right: 20px;
 
-    -webkit-box-shadow: 1px 11px 21px 0 rgba(1, 0, 0, 0.22);
-    -moz-box-shadow: 1px 11px 21px 0 rgba(1, 0, 0, 0.22);
-    box-shadow: 1px 11px 21px 0 rgba(1, 0, 0, 0.22);
+    -webkit-box-shadow: 1px 1px 10px 0 rgba(1, 0, 0, 0.22);
+    -moz-box-shadow: 1px 1px 10px 0 rgba(1, 0, 0, 0.22);
+    box-shadow: 1px 1px 10px 0 rgba(1, 0, 0, 0.22);
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    -webkit-border-radius: 34px;
-    -moz-border-radius: 34px;
-    border-radius: 34px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .o-btn-info-field:after, .o-btn-info-field:before {
@@ -214,4 +222,193 @@ main {
 
 .request-call input {
     margin-right: 10px;
+}
+
+.header-logo-container {
+    margin-left: 350px;
+}
+
+.text-align-center {
+    text-align: center;
+    color: rgb(80, 80, 80);
+}
+
+.thead-background {
+    background: #f1f1f1;
+    border: 2px #f1f1f1 solid;
+}
+.thead-background tr {
+    height: 53px;
+}
+
+.arrow-container {
+    margin: 0 0 0 30px;
+    width: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: center;
+}
+
+.arrow-container img {
+    margin-top: 130px;
+}
+
+.modal-window-wishes {
+    display: flex;
+    padding: 56px 11px 73px 11px;
+}
+
+.text-field-container textarea{
+    border: 5px #f1f1f1 solid;
+    height: 308px;
+    width: 100%;
+}
+
+.file-fiel-container {
+    background: #f1f1f1;
+    height: 58px;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.file-field-image {
+    margin-left: 102px;
+}
+
+.fields-container {
+    width: 659px;
+}
+
+.fields-container-2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 291px;
+}
+
+.text-field-container-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.text-field-container-2 label {
+    font-size: 15px;
+}
+
+.text-field-container {
+    display: flex;
+    justify-content: center;
+}
+
+.text-field-container label{
+    text-align: center;
+}
+
+.button-field-container {
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.file-download-link{
+    cursor: pointer;
+}
+
+.file-download-link input{
+    position: absolute;
+    opacity: 0;
+    width: 120px;
+    cursor: pointer;
+}
+.file-download-link a {
+    color: black;
+    cursor: pointer;
+}
+
+.file-download-link:hover a{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.fa-chevron-left {
+    font-size: 40px;
+    margin: 0 0 0 10px;
+}
+
+.fa-paperclip {
+    margin-right: 10px;
+    font-size: 30px;
+}
+
+.modal-approve-text {
+    margin: 48px 15px 0 11px;
+    border: 5px #f1f1f1 solid;
+    height: 275px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-approve-text label {
+    text-align: center;
+}
+
+.modal-approve-buttons {
+    background: #f1f1f1;
+    display: flex;
+    align-items: center;
+    height: 91px;
+    width: 659px;
+    margin: 0 15px 37px 11px;
+}
+
+.header-heads {
+    height: 192px;
+    padding: 0;
+}
+
+.table-order {
+    width: 100%;
+}
+
+.table-order tbody tr {
+    height: 48px;
+    border: 2px #f1f1f1 solid;
+}
+
+.modal-approve-button {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+}
+
+.approve-button {
+    width: 173px;
+    height: 50px;
+}
+
+.approve-button-yes {
+    margin-left: 118px;
+    margin-right: 77px;
+}
+
+.button-sent-comments {
+    width: 130px;
+}
+
+.backet-image {
+    margin-left: 15px;
+}
+
+.header-logo img {
+    max-width: max-content;
 }

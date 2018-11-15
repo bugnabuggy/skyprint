@@ -6,16 +6,19 @@ const LOAD_ORDER_DATA = 'LOAD_ORDER_DATA';
 const LOADING_ORDER_DATA = 'LOADING_ORDER_DATA';
 const SHOW_AMENDMENTS_MODAL = 'SHOW_AMENDMENTS_MODAL';
 const ORDER_NOT_FOUND = 'ORDER_NOT_FOUND';
+const SHOW_APPROWED_MODAL = 'SHOW_APPROWED_MODAL';
 export const initialStateOrder = {
   name: '',
   picture: '',
   info: '',
   address: '',
+  transportCompany: '',
   hasClientAnswer: false,
   status: '',
   isLoading: false,
   isShowAmendmentsModal: false,
   isOrderNotFound: false,
+  isShowApprovedModal: false,
 };
 
 export const actionCreators = {
@@ -42,16 +45,21 @@ export const actionCreators = {
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
         dispatch({ type: LOAD_ORDER_DATA, data: getDataFromResponse(response) });
         dispatch({ type: SHOW_AMENDMENTS_MODAL, isShow });
+        dispatch({ type: SHOW_APPROWED_MODAL, isShow });
       })
       .catch((error) => {
         console.log('error', error.message);
         const isShow = false;
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
         dispatch({ type: SHOW_AMENDMENTS_MODAL, isShow });
+        dispatch({ type: SHOW_APPROWED_MODAL, isShow });
       });
   },
   showAmendmentsModalAction: (isShow) => (dispatch) => {
     dispatch({ type: SHOW_AMENDMENTS_MODAL, isShow });
+  },
+  showApprovedModalAction: (isShow) => (dispatch) => {
+    dispatch({ type: SHOW_APPROWED_MODAL, isShow });
   },
 };
 
@@ -83,12 +91,20 @@ function orderNotFound(state, action) {
   };
 }
 
+function showApprovedModal(state, action) {
+  return {
+    ...state,
+    isShowApprovedModal: action.isShow,
+  };
+}
+
 export const reducer = (state = initialStateOrder, action) => {
   const reduceObject = {
     [LOAD_ORDER_DATA]: loadOrderData,
     [LOADING_ORDER_DATA]: loadingOrderData,
     [SHOW_AMENDMENTS_MODAL]: showAmendmentsModal,
     [ORDER_NOT_FOUND]: orderNotFound,
+    [SHOW_APPROWED_MODAL]: showApprovedModal,
   };
 
   return reduceObject.hasOwnProperty(action.type) ? reduceObject[action.type](state, action) : state;

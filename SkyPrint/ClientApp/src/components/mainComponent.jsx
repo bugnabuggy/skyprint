@@ -7,8 +7,17 @@ import { InfoField } from './infoFieldComponent';
 import { Spinner } from './spinnerComponent';
 import { parsingUrl } from '../service/helper';
 import { OrderNotFound } from './orderNotFoundComponent';
+import { MakeEdits } from './modalMakeEditsComponent';
+import { ArrowComponent } from './arrowComponent';
+import { ModalApproved } from './modalApproved';
 
 class Main extends React.Component {
+  closeAmendments = () => {
+    this.props.showAmendmentsModalAction(false);
+  };
+  closeApprove = () => {
+    this.props.showApprovedModalAction(false);
+  };
   componentDidMount() {
     if (this.props.routing.location.search) {
       this.props.loadDataAction(parsingUrl(this.props.routing.location.search));
@@ -38,12 +47,28 @@ class Main extends React.Component {
               :
               (
                 <React.Fragment>
-                  <InfoField
-                    order={this.props.order}
-                    orderId={parsingUrl(this.props.routing.location.search)}
-                    showAmendmentsModalAction={this.props.showAmendmentsModalAction}
-                    sendAmendments={this.props.sendAmendmentsAction}
-                  />
+                  <div>
+                    <InfoField
+                      order={this.props.order}
+                      orderId={parsingUrl(this.props.routing.location.search)}
+                      sendAmendments={this.props.sendAmendmentsAction}
+                      showAmendmentsModalAction={this.props.showAmendmentsModalAction}
+                      showApprovedModalAction={this.props.showApprovedModalAction}
+                    />
+                    {this.props.order.isShowAmendmentsModal && <MakeEdits
+                      showAmendments={this.props.order.isShowAmendmentsModal}
+                      orderId={parsingUrl(this.props.routing.location.search)}
+                      closeModal={this.closeAmendments}
+                      sendAmendments={this.props.sendAmendmentsAction}
+                    />}
+                    {this.props.order.isShowApprovedModal && <ModalApproved
+                      show={this.props.order.isShowApprovedModal}
+                      orderId={parsingUrl(this.props.routing.location.search)}
+                      sendAmendments={this.props.sendAmendmentsAction}
+                      closeApprove={this.closeApprove}
+                    />}
+                  </div>
+                  <ArrowComponent />
                 </React.Fragment>
               )
             :
