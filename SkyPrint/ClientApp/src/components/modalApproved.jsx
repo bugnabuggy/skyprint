@@ -8,7 +8,6 @@ export class ModalApproved extends React.Component {
     this.props.sendAmendments(this.props.orderId, formData)
   };
   render() {
-    console.log(this.props);
     return (
       <Modal
         visible={this.props.show}
