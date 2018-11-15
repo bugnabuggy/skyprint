@@ -1,5 +1,4 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
 
 export class InfoTable extends React.Component {
   render() {

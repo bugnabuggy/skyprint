@@ -21,6 +21,7 @@ export class SplashScreen extends React.Component {
         <img
           src={this.props.image}
           className="img-thumbnail splash-screen-image"
+          alt=""
         />
       </div>
     );

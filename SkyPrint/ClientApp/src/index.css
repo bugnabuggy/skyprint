@@ -230,6 +230,10 @@ main {
     width: 800px;
 }
 
+.load-spinner {
+    flex-direction: column-reverse;
+}
+
 .request-call-input {
     -webkit-appearance: checkbox;
 }
