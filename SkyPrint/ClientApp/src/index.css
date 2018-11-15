@@ -147,8 +147,13 @@ main {
 }
 
 .maket-image {
-    max-width: 600px;
+    max-width: 100%;
     margin-bottom: 30px;
+    cursor: zoom-in;
+}
+
+.splash-screen-image {
+    cursor: zoom-out;
 }
 
 .splash-screen {
