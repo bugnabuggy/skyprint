@@ -30,11 +30,7 @@ export const actionCreators = {
         dispatch({ type: LOAD_ORDER_DATA, data: getDataFromResponse(response) });
       })
       .catch((error) => {
-        if (error.response) {
-          if (error.response.status === 404) {
-            dispatch({ type: ORDER_NOT_FOUND, isNotFound: true });
-          }
-        }
+        dispatch({ type: ORDER_NOT_FOUND, isNotFound: true });
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
       });
   },
@@ -48,7 +44,6 @@ export const actionCreators = {
         dispatch({ type: SHOW_APPROWED_MODAL, isShow });
       })
       .catch((error) => {
-        console.log('error', error.message);
         const isShow = false;
         dispatch({ type: LOADING_ORDER_DATA, isLoading: false });
         dispatch({ type: SHOW_AMENDMENTS_MODAL, isShow });

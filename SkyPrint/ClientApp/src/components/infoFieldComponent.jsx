@@ -31,6 +31,7 @@ export class InfoField extends React.Component {
           <img
             className="maket-image"
             src={this.props.order.picture}
+            alt=""
             onClick={this.handleImageClick}
           />
           {this.state.showPicture &&

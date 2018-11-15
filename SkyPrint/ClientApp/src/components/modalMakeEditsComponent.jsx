@@ -22,6 +22,7 @@ export class MakeEdits extends React.Component {
     };
   }
   render() {
+    const text = this.state.file ? this.state.file.name : 'Прикрепить файл';
     return (
       <Modal
         visible={this.props.showAmendments}
@@ -36,18 +37,20 @@ export class MakeEdits extends React.Component {
               <textarea onChange={this.handleText}></textarea>
             </div>
             <div className="file-fiel-container">
-              <img src="/clip.png" className="file-field-image"/>
+              <img src="/clip.png" className="file-field-image" alt="" />
               <div className="file-download-link">
                 <input type="file" onChange={this.handleFile} alt="Выберете файл" />
-                <a>
-                  {this.state.file && this.state.file.name || 'Прикрепить файл'}
-                </a>
+                <strong>
+                  <a>
+                    {text}
+                  </a>
+                </strong>
               </div>
             </div>
           </div>
           <div className="fields-container-2">
             <div className="text-field-container-2">
-            <img src="/bracket.png" className="backet-image"/>
+              <img src="/bracket.png" className="backet-image" alt="" />
               <label>Внесите сюда свои пожелания для дизайнера</label>
             </div>
             <div className="button-field-container">
