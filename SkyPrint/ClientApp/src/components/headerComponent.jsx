@@ -16,15 +16,6 @@ class Header extends React.Component {
             </div>
           </div>
         </div>
-        <div className="header-bottom">
-          <div className="header-bottom-foots">
-            <div className="header-contact-block type-addr">
-              <p>Ильинская 4, офис 61</p>
-              <p>работаем с 9:00 до 18:00</p>
-              <span className="ics ic-header-addr"></span>
-            </div>
-          </div>
-        </div>
       </header>
     );
   }

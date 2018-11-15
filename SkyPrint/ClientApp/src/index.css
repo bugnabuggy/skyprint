@@ -1,15 +1,28 @@
 @media (max-width: 767px) {
     /* On small screens, the nav menu spans the full width of the screen. Leave a space for it. */
     body {
-        padding-top: 50px;
+    
     }
 }
 
 #root {
+    min-width: 1280px;
     height: 100%;
     display: flex;
     flex-direction: column;
     min-height: max-content;
+}
+
+.header-wrap {
+    position: relative;
+    z-index: 10;
+    -webkit-box-shadow: 0 3px 17px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0 3px 17px rgba(0,0,0,0.25);
+    box-shadow: 0 3px 17px rgba(0,0,0,0.25);
+}
+
+.clearfix, .wrapper {
+    zoom: 1;
 }
 
 main {
@@ -230,7 +243,7 @@ main {
 }
 
 .header-logo-container {
-    margin-left: 350px;
+    margin-left: 400px;
 }
 
 .text-align-center {
@@ -268,6 +281,7 @@ main {
     border: 5px #f1f1f1 solid;
     height: 308px;
     width: 100%;
+    resize: none;
 }
 
 .file-fiel-container {
