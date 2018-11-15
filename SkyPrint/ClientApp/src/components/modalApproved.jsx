@@ -5,7 +5,7 @@ export class ModalApproved extends React.Component {
   handleApprove = (event) => {
     const formData = new FormData();
     formData.append('Status', 0);
-    this.props.sendAmendments(this.props.orderId, formData)
+      this.props.sendAmendments(this.props.orderId, formData);
   };
   render() {
     return (

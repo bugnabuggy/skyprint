@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using SkyPrint.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,9 +32,9 @@ namespace SkyPrint.Services
             var dir = GetOrderDirectory(id);
 
             var infoData = ParseInfoTxt(dir);
-            infoData = RefactorInfoData(infoData);
+            var valuesDict = RefactorInfoData(infoData);
 
-            var result = GetInfoDTO(infoData, dir);
+            var result = GetInfoDTO(valuesDict, dir);
 
             return new OperationResult<OrderInfoDTO>()
             {
@@ -48,15 +49,17 @@ namespace SkyPrint.Services
             var dir = GetOrderDirectory(id);
 
             var infoData = ParseInfoTxt(dir);
-            infoData = RefactorInfoData(infoData);
+            var valuesDict = RefactorInfoData(infoData);
 
             try
             {
-                string filePath = "";
+                var filePath = "";
+                var comments = item.Comments ?? ""; 
+
 
                 if (item.Image != null)
                 {
-                    filePath = dir + $"\\c_{infoData[1]}";
+                    filePath = dir + $"\\c_{valuesDict["maket"]}";
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
@@ -78,7 +81,7 @@ namespace SkyPrint.Services
                 {
                     "Ответ = " + Responses.GetResponse(item.Status),
                     "Файл = " + filePath,
-                    "Комментарий = " + item.Comments
+                    "Комментарий = " + comments.Replace("\n", "; ")
                 };
 
                 using (TextWriter fileTW = new StreamWriter(scaDir))
@@ -100,7 +103,7 @@ namespace SkyPrint.Services
 
             return new OperationResult()
             {
-                Data = GetInfoDTO(infoData, dir),
+                Data = GetInfoDTO(valuesDict, dir),
                 Success = true,
                 Messages = new[] { "Edits was sended successfully" }
             };
@@ -111,9 +114,9 @@ namespace SkyPrint.Services
             var dir = GetOrderDirectory(id);
 
             var info = ParseInfoTxt(dir);
-            info = RefactorInfoData(info);
+            var valuesDict = RefactorInfoData(info);
 
-            var imageName = info[1];
+            var imageName = valuesDict["maket"];
 
             if (IsImageExistByInfo(imageName, dir))
             {
@@ -168,14 +171,16 @@ namespace SkyPrint.Services
         }
 
         // Returns OrderInfoDTO based by content of info.txt and *.sca 
-        private OrderInfoDTO GetInfoDTO(string[] infoData,  string directory)
+        private OrderInfoDTO GetInfoDTO(Dictionary<string, string> infoData,  string directory)
         {
+
             var result = new OrderInfoDTO()
             {
-                Name = infoData[0],
-                Picture = $"api/image/{infoData[0]}",
-                Info = infoData[2],
-                Address = infoData[3],
+                Name = infoData["name"],
+                Picture = $"api/image/{infoData["name"]}",
+                Info = infoData.FirstOrDefault(x => x.Key.Equals("dop-infa")).Value,
+                Address = infoData.FirstOrDefault(x => x.Key.Equals("adress")).Value,
+                TransportCompany = infoData.FirstOrDefault(x => x.Key.Equals("transport_kompany")).Value,
                 HasClientAnswer = true
             };
 
@@ -207,19 +212,39 @@ namespace SkyPrint.Services
         }
 
         // Cleans infoData from waste data
-        private string[] RefactorInfoData(string[] data)
+        private Dictionary<string, string> RefactorInfoData(string[] data)
         {
+            var values = new Dictionary<string, string>();
+
             data[0] = data[0].Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries)[0];
+            values.Add("name", data[0]);
 
-            for (int i = 1; i <= 3; i++)
+
+            foreach (var str in data)
             {
-                var temp = data[i].Split('\"');
+                var split = str.Split("=");
+                if (split.Length < 2 )
+                {
+                    if(!string.IsNullOrWhiteSpace(str))
+                        { values.Add(str, str);}
+                    continue;
+                }
+                else
+                {
+                    values.Add(split[0].Trim(), split[1].Replace("\"", "").Trim());
+                }
 
-                data[i] = temp.Length > 0
-                    ? temp[1]
-                    : null;
             }
-            return data;
+
+            //for (int i = 1; i <= 3; i++)
+            //{
+            //    var temp = data[i].Split('\"');
+
+            //    data[i] = temp.Length > 0
+            //        ? temp[1]
+            //        : null;
+            //}
+            return values;
         }
 
         // Returns full path to *.sca file (or null if it doesn`t exist)

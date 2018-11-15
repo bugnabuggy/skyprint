@@ -19,6 +19,10 @@ namespace SkyPrint.Helpers
             while (allowedChars.Any(x => x == id[cutPos]))
             {
                 cutPos++;
+                if (id.Length == cutPos)
+                {
+                    break;
+                }
             }
 
             var result = new string(id.SkipLast(id.Length - cutPos).ToArray());
