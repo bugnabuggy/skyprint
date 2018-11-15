@@ -12,7 +12,7 @@ export class ModalApproved extends React.Component {
       <Modal
         visible={this.props.show}
         width="684"
-        height="455"
+        height="365"
         effect="fadeInDown"
         onClickAway={this.props.closeApprove}
       >

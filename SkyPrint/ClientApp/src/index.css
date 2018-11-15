@@ -174,7 +174,6 @@ main {
     width: 100%;
     top: 0;
     left: 0;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -340,24 +339,21 @@ main {
     justify-content: center;
 }
 
-.file-download-link{
+.file-download-link, .file-download-link strong{
     cursor: pointer;
 }
 
 .file-download-link input{
     position: absolute;
     opacity: 0;
-    width: 120px;
+    width: 140px;
     cursor: pointer;
 }
 .file-download-link a {
     color: black;
     cursor: pointer;
-}
-
-.file-download-link:hover a{
     text-decoration: underline;
-    cursor: pointer;
+    font-size: 16px;
 }
 
 .fa-chevron-left {
@@ -371,7 +367,6 @@ main {
 }
 
 .modal-approve-text {
-    margin: 48px 15px 0 11px;
     border: 5px #f1f1f1 solid;
     height: 275px;
     display: flex;
@@ -388,9 +383,7 @@ main {
     background: #f1f1f1;
     display: flex;
     align-items: center;
-    height: 91px;
-    width: 659px;
-    margin: 0 15px 37px 11px;
+    height: 90px;
 }
 
 .header-heads {
