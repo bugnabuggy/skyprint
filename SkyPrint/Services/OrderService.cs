@@ -109,34 +109,38 @@ namespace SkyPrint.Services
             };
         }
 
-        public OperationResult<OrderImageInfoDTO> GetImage(string id)
+        public OperationResult<OrderModelInfoDTO> GetModel(string id)
         {
             var dir = GetOrderDirectory(id);
 
             var info = ParseInfoTxt(dir);
             var valuesDict = RefactorInfoData(info);
 
-            var imageName = valuesDict["maket"];
+            var modelName = valuesDict["maket"];
 
-            if (IsImageExistByInfo(imageName, dir))
+            if (IsModelExistByInfo(modelName, dir))
             {
-                var imageType = imageName.Split('.')[1];
-                var data = File.ReadAllBytes($"{dir}\\{imageName}");
+                var fileExtension = GetModelFileExtension(modelName);
+                var data = File.ReadAllBytes($"{dir}\\{modelName}");
 
-                return new OperationResult<OrderImageInfoDTO>()
+                var fileType = fileExtension == "pdf"
+                    ? "application"
+                    : "image";
+
+                return new OperationResult<OrderModelInfoDTO>()
                 {
                     Success = true,
-                    Messages = new[] { "Image was found" },
-                    Data = new OrderImageInfoDTO()
+                    Messages = new[] { "Model was found" },
+                    Data = new OrderModelInfoDTO()
                     {
-                        Image = data,
-                        FileName = imageName,
-                        FileType = $"image/{imageType}",
+                        FileContent = data,
+                        FileName = modelName,
+                        FileType = $"{fileType}/{fileExtension}",
                     }
                 };
             }
 
-            return new OperationResult<OrderImageInfoDTO>();
+            return new OperationResult<OrderModelInfoDTO>();
         }
 
         // Checks if there is an order catalog and order info in host catalog by recieved id
@@ -158,7 +162,7 @@ namespace SkyPrint.Services
         }
 
         // Checks if there is an image in pointed catalog with recieved name
-        public bool IsImageExistByInfo(string name, string dir)
+        public bool IsModelExistByInfo(string name, string dir)
         {
             var files = System.IO.Directory.GetFiles(dir);
 
@@ -178,6 +182,7 @@ namespace SkyPrint.Services
             {
                 Name = infoData["name"],
                 Picture = $"api/image/{infoData["name"]}",
+                FileType = GetModelFileExtension(infoData["name"]),
                 Info = infoData.FirstOrDefault(x => x.Key.Equals("dop-infa")).Value,
                 Address = infoData.FirstOrDefault(x => x.Key.Equals("adress")).Value,
                 TransportCompany = infoData.FirstOrDefault(x => x.Key.Equals("transport_kompany")).Value,
@@ -289,6 +294,14 @@ namespace SkyPrint.Services
             ));
 
             return dir;
+        }
+
+        // Returns model file extension
+        private string GetModelFileExtension(string fileName)
+        {
+            var ext = fileName.Split('.', StringSplitOptions.RemoveEmptyEntries).Last();
+
+            return ext;
         }
     }
 }

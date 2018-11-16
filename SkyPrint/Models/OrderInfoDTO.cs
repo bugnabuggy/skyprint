@@ -9,6 +9,7 @@ namespace SkyPrint.Models
     {
         public string Name { get; set; }
         public string Picture { get; set; }
+        public string FileType { get; set; }
         public string Info { get; set; }
         public string Address { get; set; }
         public string TransportCompany { get; set; }
