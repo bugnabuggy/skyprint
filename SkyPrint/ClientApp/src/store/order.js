@@ -15,6 +15,7 @@ export const initialStateOrder = {
   transportCompany: '',
   hasClientAnswer: false,
   status: '',
+  fileType: '',
   isLoading: false,
   isShowAmendmentsModal: false,
   isOrderNotFound: false,

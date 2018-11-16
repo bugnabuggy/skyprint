@@ -158,10 +158,15 @@ main {
     -moz-transition: opacity .3s ease;
     transition: opacity .3s ease;
 }
+.maket-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .maket-image {
-    max-width: 100%;
-    margin-bottom: 30px;
+    max-height: 430px;
+    max-width: 449px;
     cursor: zoom-in;
 }
 
@@ -170,17 +175,30 @@ main {
 }
 
 .splash-screen {
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 20px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: 1001;
     background-color: rgba(34, 33, 33, 0.658);
+}
+
+.splash-screen-image-container {
+    margin: auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.splash-screen-image-container img {
+    display: block;
+    max-height: 100%;
+    max-width: 100%;
+    margin: 10px;
 }
 
 .splash-screen-document-container {
