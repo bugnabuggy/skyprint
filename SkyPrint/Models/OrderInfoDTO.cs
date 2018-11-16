@@ -11,6 +11,7 @@ namespace SkyPrint.Models
         public string Picture { get; set; }
         public string Info { get; set; }
         public string Address { get; set; }
+        public string TransportCompany { get; set; }
         public bool HasClientAnswer { get; set; }
         public string Status { get; set; }
     }
