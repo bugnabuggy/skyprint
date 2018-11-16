@@ -165,11 +165,12 @@ main {
     cursor: zoom-in;
 }
 
-.splash-screen-image {
+.splash-screen-image, .splash-screen-document {
     cursor: zoom-out;
 }
 
 .splash-screen {
+    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
@@ -180,6 +181,38 @@ main {
     align-items: center;
     z-index: 1001;
     background-color: rgba(34, 33, 33, 0.658);
+}
+
+.splash-screen-document-container {
+    position: fixed;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    background-color: rgba(34, 33, 33, 0.658);
+}
+.document-pdf {
+    overflow: auto;
+    max-height: 430px;
+    cursor: zoom-in;
+}
+
+.document-pdf-page {
+    margin-bottom: 10px;
+}
+
+.document-pdf-page:last-child {
+    margin-bottom: 0;
+}
+
+.splash-screen-document {
+    max-width: 1000px;
+    overflow: auto;
 }
 
 .responsive-modal {
