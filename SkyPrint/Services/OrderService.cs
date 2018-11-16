@@ -182,7 +182,7 @@ namespace SkyPrint.Services
             {
                 Name = infoData["name"],
                 Picture = $"api/image/{infoData["name"]}",
-                FileType = GetModelFileExtension(infoData["name"]),
+                FileType = GetModelFileExtension(infoData["maket"]),
                 Info = infoData.FirstOrDefault(x => x.Key.Equals("dop-infa")).Value,
                 Address = infoData.FirstOrDefault(x => x.Key.Equals("adress")).Value,
                 TransportCompany = infoData.FirstOrDefault(x => x.Key.Equals("transport_kompany")).Value,
