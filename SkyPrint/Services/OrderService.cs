@@ -84,7 +84,7 @@ namespace SkyPrint.Services
                 using (TextWriter fileTW = File.CreateText($"{dirCatalogWithMarks}\\{dateTimeStamp}.sca"))
                 {
                     fileTW.NewLine = "\n";
-                    fileTW.WriteLine(valuesDict["maket"]);
+                    fileTW.WriteLine(valuesDict["name"]);
                 }
 
                 var content = new[]
