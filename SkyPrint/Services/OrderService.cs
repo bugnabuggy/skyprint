@@ -54,7 +54,7 @@ namespace SkyPrint.Services
             try
             {
                 var filePath = "";
-                var comments = item.Comments ?? ""; 
+                var comments = item.Comments ?? "";
 
 
                 if (item.Image != null)
@@ -67,14 +67,24 @@ namespace SkyPrint.Services
                     }
                 }
 
-                var scaDir = GetScaDirectory(dir);
+                var dirs = System.IO.Directory.GetDirectories(_fileHost);
+                var catalogWithMarks = _cfg.GetValue<string>("CatalogWithMarks");
 
-                if (scaDir == null)
+                var dirCatalogWithMarks = dirs.FirstOrDefault(x =>
+                    catalogWithMarks.Equals(new String(x.Skip(_fileHost.Length + 1).ToArray())));
+
+                if (dirCatalogWithMarks == null)
                 {
-                    return new OperationResult()
-                    {
-                        Messages = new[] { "There is now file to attach edits" }
-                    };
+                    dirCatalogWithMarks = $"{_fileHost}\\{catalogWithMarks}";
+                    System.IO.Directory.CreateDirectory(dirCatalogWithMarks);
+                }
+
+                var dateTimeStamp = DateTime.UtcNow.ToString("yyyyMMdd_HH_mm_ss");
+
+                using (TextWriter fileTW = File.CreateText($"{dirCatalogWithMarks}\\{dateTimeStamp}.sca"))
+                {
+                    fileTW.NewLine = "\n";
+                    fileTW.WriteLine(valuesDict["maket"]);
                 }
 
                 var content = new[]
@@ -84,13 +94,19 @@ namespace SkyPrint.Services
                     "Комментарий = " + comments.Replace("\n", "; ")
                 };
 
-                using (TextWriter fileTW = new StreamWriter(scaDir))
+                using (TextWriter fileTW = new StreamWriter($"{dir}\\{dateTimeStamp}.sca"))
                 {
                     fileTW.NewLine = "\n";
                     foreach (string s in content)
                     {
                         fileTW.WriteLine(s);
                     }
+                }
+
+                using (TextWriter fileTW = new StreamWriter($"{dir}\\ok.txt"))
+                {
+                    fileTW.NewLine = "\n";
+                    fileTW.WriteLine();
                 }
             }
             catch (Exception ex)
@@ -171,7 +187,7 @@ namespace SkyPrint.Services
         }
 
         // Returns OrderInfoDTO based by content of info.txt and *.sca 
-        private OrderInfoDTO GetInfoDTO(Dictionary<string, string> infoData,  string directory)
+        private OrderInfoDTO GetInfoDTO(Dictionary<string, string> infoData, string directory)
         {
 
             var result = new OrderInfoDTO()
@@ -181,22 +197,20 @@ namespace SkyPrint.Services
                 Info = infoData.FirstOrDefault(x => x.Key.Equals("dop-infa")).Value,
                 Address = infoData.FirstOrDefault(x => x.Key.Equals("adress")).Value,
                 TransportCompany = infoData.FirstOrDefault(x => x.Key.Equals("transport_kompany")).Value,
-                HasClientAnswer = true
             };
 
-            var scaDir = GetScaDirectory(directory);
-            if (scaDir != null)
+            if (File.Exists($"{directory}\\ok.txt"))
             {
-                var scaData = ParseSca(directory);
-                scaData = RefactorScaData(scaData);
+                result.HasClientAnswer = true;
 
-                if (!string.IsNullOrEmpty(scaData[0]))
+                var scaDir = GetScaDirectory(directory);
+            
+                if (scaDir != null)
                 {
+                    var scaData = ParseSca(directory);
+                    scaData = RefactorScaData(scaData);
+
                     result.Status = scaData[0];
-                }
-                else
-                {
-                    result.HasClientAnswer = false;
                 }
             }
 
@@ -223,10 +237,10 @@ namespace SkyPrint.Services
             foreach (var str in data)
             {
                 var split = str.Split("=");
-                if (split.Length < 2 )
+                if (split.Length < 2)
                 {
-                    if(!string.IsNullOrWhiteSpace(str))
-                        { values.Add(str, str);}
+                    if (!string.IsNullOrWhiteSpace(str))
+                    { values.Add(str, str); }
                     continue;
                 }
                 else
@@ -250,10 +264,18 @@ namespace SkyPrint.Services
         // Returns full path to *.sca file (or null if it doesn`t exist)
         private string GetScaDirectory(string directory)
         {
-            // TODO: CHANGE FILE FINDING
-            var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.EndsWith("sca"));
+            try
+            {
+                var dir = System.IO.Directory.GetFiles(directory)
+                        .OrderByDescending(x => x)
+                        .FirstOrDefault(x => x.EndsWith("sca"));
 
-            return dir;
+                return dir;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         // Parses a *.sca founded in order directory to string array
@@ -272,7 +294,14 @@ namespace SkyPrint.Services
             {
                 var temp = data[i].Split(new[] { '=' });
 
-                data[i] = new String(temp[1].Skip(1).ToArray());
+                if (temp.Length > 1)
+                {
+                    data[i] = temp[1].Trim();
+                }
+                else
+                {
+                    data[i] = null;
+                }
             }
 
             return data;
