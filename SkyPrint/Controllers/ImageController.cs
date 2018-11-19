@@ -35,14 +35,14 @@ namespace SkyPrint.Controllers
                 return NotFound("Order not found");
             }
 
-            var result = _orderSrv.GetImage(id);
+            var result = _orderSrv.GetModel(id);
 
             if (result.Success)
             {
-                return File(result.Data.Image, result.Data.FileType, result.Data.FileName);
+                return File(result.Data.FileContent, result.Data.FileType, result.Data.FileName);
             }
 
-            return NotFound("Image wasn`t found");
+            return NotFound("Model wasn`t found");
         }
     }
 }
