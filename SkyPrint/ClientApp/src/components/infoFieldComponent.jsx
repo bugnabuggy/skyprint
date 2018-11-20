@@ -14,7 +14,10 @@ export class InfoField extends React.Component {
   };
   onDocumentLoadSuccess = ({ numPages }) => {
     this.setState({ numPages });
-  }
+  };
+  handleSplashScreenBanner = () => {
+    this.props.showSplashScreenBannerAction(false);
+  };
 
   constructor(props) {
     super(props);
@@ -71,12 +74,12 @@ export class InfoField extends React.Component {
             (
               <React.Fragment>
                 <div className="maket-image-container">
-                <img
-                  className="maket-image"
-                  src={this.props.order.picture}
-                  alt=""
-                  onClick={this.handleImageClick}
-                />
+                  <img
+                    className="maket-image"
+                    src={this.props.order.picture}
+                    alt=""
+                    onClick={this.handleImageClick}
+                  />
                 </div>
                 {this.state.showPicture &&
                   <SplashScreen
@@ -87,6 +90,14 @@ export class InfoField extends React.Component {
                 }
               </React.Fragment>)
           }
+          {this.props.order.isShowBanner &&
+            (
+              <SplashScreen
+                image="/api/banner/center"
+                imageClick={this.handleSplashScreenBanner}
+                showPicture={this.props.order.isShowBanner}
+              />
+            )}
         </div>
         <div>
           <ButtonsComponent

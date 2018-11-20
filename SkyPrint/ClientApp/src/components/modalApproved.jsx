@@ -19,7 +19,7 @@ export class ModalApproved extends React.Component {
         <div className="modal-approve-text">
           <h3><label>
             <p>Я ВНИМАТЕЛЬНО проверил весь текст,</p>
-            <p>адреса, телефоны, цены. Оштбок нет.</p>
+            <p>адреса, телефоны, цены. Ошибок нет.</p>
             <p>ПОЛНОСТЬЮ НЕСУ ЗА ЭТО ОТВЕТСТВЕННОСТЬ.</p>
             <p>Можете отдавать в печать.</p>
           </label></h3>

@@ -50,6 +50,13 @@ main {
 
 .banner {
     background-color: #f1f1f1;
+    width: 200px;
+}
+
+.banner img {
+    object-fit: scale-down;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .number_order {

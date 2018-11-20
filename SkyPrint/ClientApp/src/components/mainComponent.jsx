@@ -54,6 +54,7 @@ class Main extends React.Component {
                       sendAmendments={this.props.sendAmendmentsAction}
                       showAmendmentsModalAction={this.props.showAmendmentsModalAction}
                       showApprovedModalAction={this.props.showApprovedModalAction}
+                      showSplashScreenBannerAction={this.props.showSplashScreenBannerAction}
                     />
                     {this.props.order.isShowAmendmentsModal && <MakeEdits
                       showAmendments={this.props.order.isShowAmendmentsModal}
