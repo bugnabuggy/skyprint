@@ -56,10 +56,14 @@ namespace SkyPrint.Services
                 var filePath = "";
                 var comments = item.Comments ?? "";
 
+                var fileExtension = GetModelFileExtension(item.Image.FileName);
+
+                var targetFilename = valuesDict["maket"]
+                    .TrimEnd(GetModelFileExtension(valuesDict["maket"]).ToCharArray());
 
                 if (item.Image != null)
                 {
-                    filePath = dir + $"\\c_{valuesDict["maket"]}";
+                    filePath = dir + $"\\c_{targetFilename}{fileExtension}";
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
