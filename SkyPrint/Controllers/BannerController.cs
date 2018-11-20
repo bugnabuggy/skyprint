@@ -22,18 +22,29 @@ namespace SkyPrint.Controllers
         [Route("left")]
         public IActionResult GetLeftBanner()
         {
+            var result = _bannerSrv.GetLeftBanner();
 
+            if (result != null)
+            {
+                return File(result.FileContent, result.FileType, result.FileName);
+            }
 
-            return Ok();
+            return NotFound();
         }
 
-        // GET api/banner/end
+        // GET api/banner/center
         [HttpGet]
-        [Route("end")]
-        public IActionResult GetEndBanner()
+        [Route("center")]
+        public IActionResult GetCenterBanner()
         {
+            var result = _bannerSrv.GetCenterBanner();
 
-            return Ok();
+            if (result != null)
+            {
+                return File(result.FileContent, result.FileType, result.FileName);
+            }
+
+            return NotFound();
         }
     }
 }

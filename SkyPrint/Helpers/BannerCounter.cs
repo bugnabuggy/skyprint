@@ -10,12 +10,12 @@ namespace SkyPrint.Helpers
         private static readonly BannerCounter counter = new BannerCounter();
 
         private static ulong LeftBannerCounter { get; set; }
-        private static ulong EndBannerCounter { get; set; }
+        private static ulong CenterBannerCounter { get; set; }
 
         private BannerCounter()
         {
             LeftBannerCounter = 0;
-            EndBannerCounter = 0;
+            CenterBannerCounter = 0;
         }
 
         public static BannerCounter GetCounter()
@@ -23,14 +23,14 @@ namespace SkyPrint.Helpers
             return counter;
         }
 
-        public static ulong GetLeftCounter()
+        public ulong GetLeftCounter()
         {
             return LeftBannerCounter++;
         }
 
-        public static ulong GetEndCounter()
+        public ulong GetCenterCounter()
         {
-            return EndBannerCounter++;
+            return CenterBannerCounter++;
         }
     }
 }

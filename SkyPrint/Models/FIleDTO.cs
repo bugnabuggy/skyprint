@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SkyPrint.Models
 {
-    public class OrderModelInfoDTO
+    public class FileDTO
     {
         public byte[] FileContent { get; set; }
         public string FileType { get; set; }

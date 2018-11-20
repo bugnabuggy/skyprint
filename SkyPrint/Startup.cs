@@ -25,6 +25,7 @@ namespace SkyPrint
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<IOrderServices, OrderService>();
             services.AddScoped<IIdHelper, IdHelper>();
+            services.AddScoped<IBannerService, BannerService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

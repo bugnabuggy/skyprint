@@ -7,7 +7,7 @@ namespace SkyPrint.Services
     public interface IOrderServices
     {
         OperationResult<OrderInfoDTO> GetInfo(string id);
-        OperationResult<OrderModelInfoDTO> GetModel(string id);
+        OperationResult<FileDTO> GetModel(string id);
         bool IsOrderExistById(string id);
         Task<OperationResult> EditOrder(string id, OrderEditFormDTO item);
     }
