@@ -23,8 +23,6 @@ namespace SkyPrint
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IConfiguration>(Configuration);
-            services.AddSingleton(Configuration.GetSection("AnswerStab").Get<AnswerStab>());
-
             services.AddScoped<IOrderServices, OrderService>();
             services.AddScoped<IIdHelper, IdHelper>();
 
@@ -40,20 +38,16 @@ namespace SkyPrint
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
+
+            app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            app.UseCors();
+            app.UseCors(opt => opt
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin());
 
             app.UseMvc(routes =>
             {

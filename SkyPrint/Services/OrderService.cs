@@ -5,46 +5,36 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SkyPrint.Helpers;
+using Microsoft.AspNetCore.Http.Features;
+using System.Text;
 
 namespace SkyPrint.Services
 {
     public class OrderService : IOrderServices
     {
+        private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private IConfiguration _cfg;
+        private IIdHelper _idHelper;
         private string _fileHost;
 
-        public OrderService(IConfiguration cfg)
+        public OrderService(IConfiguration cfg,
+                            IIdHelper idHelper)
         {
             _cfg = cfg;
+            _idHelper = idHelper;
             _fileHost = _cfg.GetValue<string>("FileHost");
         }
 
         public OperationResult<OrderInfoDTO> GetInfo(string id)
         {
-            var dir = GetDirectory(id);
+            var dir = GetOrderDirectory(id);
 
             var infoData = ParseInfoTxt(dir);
-            infoData = RefactorInfoData(infoData);
+            var valuesDict = RefactorInfoData(infoData);
 
-            var csaData = ParseCsa(dir);
-            csaData = RefactorCsaData(csaData);
-
-            var result = new OrderInfoDTO()
-            {
-                Name = infoData[0],
-                Picture = "api/image?id=" + infoData[0],
-                Info = infoData[2],
-                Address = infoData[3]
-            };
-
-            if (!string.IsNullOrEmpty(csaData[0]))
-            {
-                result.HasClientAnswer = true;
-                result.Status = csaData[0];
-            }
+            var result = GetInfoDTO(valuesDict, dir);
 
             return new OperationResult<OrderInfoDTO>()
             {
@@ -54,97 +44,297 @@ namespace SkyPrint.Services
             };
         }
 
-        public OperationResult<OrderImageInfoDTO> GetImage(string id)
+        public async Task<OperationResult> EditOrder(string id, OrderEditFormDTO item)
         {
-            var dir = GetDirectory(id);
+            var dir = GetOrderDirectory(id);
 
-            var info = ParseInfoTxt(dir);
-            info = RefactorInfoData(info);
-            var imageName = info[1];
-            var imageType = imageName.Split('.')[1];
-            //var data = File.ReadAllBytes("D:\\Pictures\\1338411218-2064600-0109746_www.nevseoboi.com.ua.jpg");
-            var data = Convert.FromBase64String(AnswerStab.Maket.ImageContent);
+            var infoData = ParseInfoTxt(dir);
+            var valuesDict = RefactorInfoData(infoData);
 
-            return new OperationResult<OrderImageInfoDTO>()
+            try
             {
-                Success = true,
-                Messages = new[] { "Image was found" },
-                Data = new OrderImageInfoDTO()
+                var filePath = "";
+                var comments = item.Comments ?? "";
+
+                var fileExtension = GetModelFileExtension(item.Image.FileName);
+
+                var targetFilename = valuesDict["maket"]
+                    .TrimEnd(GetModelFileExtension(valuesDict["maket"]).ToCharArray());
+
+                if (item.Image != null)
                 {
-                    Image = data,
-                    FileName = imageName,
-                    FileType = $"image/{imageType}",
+                    filePath = dir + $"\\c_{targetFilename}{fileExtension}";
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await item.Image.CopyToAsync(stream);
+                    }
                 }
+
+                var dirs = System.IO.Directory.GetDirectories(_fileHost);
+                var catalogWithMarks = _cfg.GetValue<string>("CatalogWithMarks");
+
+                var dirCatalogWithMarks = dirs.FirstOrDefault(x =>
+                    catalogWithMarks.Equals(new String(x.Skip(_fileHost.Length + 1).ToArray())));
+
+                if (dirCatalogWithMarks == null)
+                {
+                    dirCatalogWithMarks = $"{_fileHost}\\{catalogWithMarks}";
+                    System.IO.Directory.CreateDirectory(dirCatalogWithMarks);
+                }
+
+                var dateTimeStamp = DateTime.UtcNow.ToString("yyyyMMdd_HH_mm_ss");
+
+                using (TextWriter fileTW = File.CreateText($"{dirCatalogWithMarks}\\{dateTimeStamp}.sca"))
+                {
+                    fileTW.NewLine = "\n";
+                    fileTW.WriteLine(valuesDict["name"]);
+                }
+
+                var content = new[]
+                {
+                    "Ответ = " + Responses.GetResponse(item.Status),
+                    "Файл = " + filePath,
+                    "Комментарий = " + comments.Replace("\n", "; ")
+                };
+
+                using (TextWriter fileTW = new StreamWriter($"{dir}\\{dateTimeStamp}.sca"))
+                {
+                    fileTW.NewLine = "\n";
+                    foreach (string s in content)
+                    {
+                        fileTW.WriteLine(s);
+                    }
+                }
+
+                using (TextWriter fileTW = new StreamWriter($"{dir}\\ok.txt"))
+                {
+                    fileTW.NewLine = "\n";
+                    fileTW.WriteLine();
+                }
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult()
+                {
+                    Messages = new[] { $"ERROR: {ex.Message}" }
+                };
+            }
+
+            return new OperationResult()
+            {
+                Data = GetInfoDTO(valuesDict, dir),
+                Success = true,
+                Messages = new[] { "Edits was sended successfully" }
             };
         }
 
+        public OperationResult<OrderModelInfoDTO> GetModel(string id)
+        {
+            var dir = GetOrderDirectory(id);
+
+            var info = ParseInfoTxt(dir);
+            var valuesDict = RefactorInfoData(info);
+
+            var modelName = valuesDict["maket"];
+
+            if (IsModelExistByInfo(modelName, dir))
+            {
+                var fileExtension = GetModelFileExtension(modelName);
+                var data = File.ReadAllBytes($"{dir}\\{modelName}");
+
+                var fileType = fileExtension == "pdf"
+                    ? "application"
+                    : "image";
+
+                return new OperationResult<OrderModelInfoDTO>()
+                {
+                    Success = true,
+                    Messages = new[] { "Model was found" },
+                    Data = new OrderModelInfoDTO()
+                    {
+                        FileContent = data,
+                        FileName = modelName,
+                        FileType = $"{fileType}/{fileExtension}",
+                    }
+                };
+            }
+
+            return new OperationResult<OrderModelInfoDTO>();
+        }
+
+        // Checks if there is an order catalog and order info in host catalog by recieved id
         public bool IsOrderExistById(string id)
         {
-            //var dirs = System.IO.Directory.GetDirectories(_fileHost);
-            var dirs = new[] { AnswerStab.Directory };
+            var dir = GetOrderDirectory(id);
 
-            if (dirs.Any(x => x.Contains(id)))
+            if (dir != null)
             {
-                return true;
+                var dirFiles = System.IO.Directory.GetFiles(dir);
+
+                if (dirFiles.Any(x => x == $"{dir}\\info.txt"))
+                {
+                    return true;
+                }
             }
+
             return false;
         }
 
+        // Checks if there is an image in pointed catalog with recieved name
+        public bool IsModelExistByInfo(string name, string dir)
+        {
+            var files = System.IO.Directory.GetFiles(dir);
+
+            if (files.Any(x => x == $"{dir}\\{name}"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        // Returns OrderInfoDTO based by content of info.txt and *.sca 
+        private OrderInfoDTO GetInfoDTO(Dictionary<string, string> infoData, string directory)
+        {
+
+            var result = new OrderInfoDTO()
+            {
+                Name = infoData["name"],
+                Picture = $"api/image/{infoData["name"]}",
+                FileType = GetModelFileExtension(infoData.FirstOrDefault(x => x.Key.Equals("maket")).Value),
+                Info = infoData.FirstOrDefault(x => x.Key.Equals("dop-infa")).Value,
+                Address = infoData.FirstOrDefault(x => x.Key.Equals("adress")).Value,
+                TransportCompany = infoData.FirstOrDefault(x => x.Key.Equals("transport_kompany")).Value,
+            };
+
+            if (File.Exists($"{directory}\\ok.txt"))
+            {
+                result.HasClientAnswer = true;
+
+                var scaDir = GetScaDirectory(directory);
+            
+                if (scaDir != null)
+                {
+                    var scaData = ParseSca(directory);
+                    scaData = RefactorScaData(scaData);
+
+                    result.Status = scaData[0];
+                }
+            }
+
+            return result;
+        }
+
+        // Parses a info.txt founded in order directory to string array
         private string[] ParseInfoTxt(string directory)
         {
-            //var data = File.ReadAllLines($"{directory}" + "\\info.txt", Encoding.UTF8);
-            var data = new[]
-            {
-                "[1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт]",
-                "maket = \"1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт.jpg\"",
-                "dop-infa = \"\"",
-                "adress = \"г. Тюмень, Болтенко Светлана Сергеевна\""
-            };
+            var data = File.ReadAllLines($"{directory}" + "\\info.txt", Encoding.UTF8);
 
             return data;
         }
 
-        private string[] RefactorInfoData(string[] data)
+        // Cleans infoData from waste data
+        private Dictionary<string, string> RefactorInfoData(string[] data)
         {
+            var values = new Dictionary<string, string>();
+
             data[0] = data[0].Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries)[0];
+            values.Add("name", data[0]);
 
-            for (int i = 1; i <= 3; i++)
+
+            foreach (var str in data)
             {
-                data[i] = data[i].Split('\"')[1];
+                var split = str.Split("=");
+                if (split.Length < 2)
+                {
+                    if (!string.IsNullOrWhiteSpace(str))
+                    { values.Add(str, str); }
+                    continue;
+                }
+                else
+                {
+                    values.Add(split[0].Trim(), split[1].Replace("\"", "").Trim());
+                }
+
             }
-            return data;
+
+            //for (int i = 1; i <= 3; i++)
+            //{
+            //    var temp = data[i].Split('\"');
+
+            //    data[i] = temp.Length > 0
+            //        ? temp[1]
+            //        : null;
+            //}
+            return values;
         }
 
-        private string[] ParseCsa(string directory)
+        // Returns full path to *.sca file (or null if it doesn`t exist)
+        private string GetScaDirectory(string directory)
         {
-            //var dir = System.IO.Directory.GetFiles(directory).FirstOrDefault(x => x.Contains("csa"));
-            //var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
-            var data = new[]
+            try
             {
-                "Ответ = Макет одобрен",
-                "Файл = ",
-                "Комментарий = "
-            };
+                var dir = System.IO.Directory.GetFiles(directory)
+                        .OrderByDescending(x => x)
+                        .FirstOrDefault(x => x.EndsWith("sca"));
+
+                return dir;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        // Parses a *.sca founded in order directory to string array
+        private string[] ParseSca(string directory)
+        {
+            var dir = GetScaDirectory(directory);
+            var data = File.ReadAllLines($"{dir}", Encoding.UTF8);
 
             return data;
         }
 
-        private string[] RefactorCsaData(string[] data)
+        // Cleans scaData from waste data
+        private string[] RefactorScaData(string[] data)
         {
             for (int i = 0; i < 3; i++)
             {
                 var temp = data[i].Split(new[] { '=' });
-                data[i] = temp[1];
+
+                if (temp.Length > 1)
+                {
+                    data[i] = temp[1].Trim();
+                }
+                else
+                {
+                    data[i] = null;
+                }
             }
+
             return data;
         }
 
-        private string GetDirectory(string id)
+        // Returns an order directory in the host directory by recieved id
+        private string GetOrderDirectory(string id)
         {
-            //var dirs = System.IO.Directory.GetDirectories(_fileHost);
-            var dirs = new[] { "1887_28_Листовки_А6_99_139мм_4_4_115г_СБОРКА_2500_2 500шт" };
+            var dirs = System.IO.Directory.GetDirectories(_fileHost);
 
-            return dirs.FirstOrDefault(x => x.Contains(id));
+            var dir = dirs.FirstOrDefault(x => id.Equals
+            (
+                _idHelper.CutIdBeforeFirstLetter(new String(x.Skip(_fileHost.Length + 1).ToArray()))
+            ));
+
+            return dir;
+        }
+
+        // Returns model file extension
+        private string GetModelFileExtension(string fileName)
+        {
+            var ext = fileName.Split('.', StringSplitOptions.RemoveEmptyEntries).Last();
+
+            return ext;
         }
     }
 }
