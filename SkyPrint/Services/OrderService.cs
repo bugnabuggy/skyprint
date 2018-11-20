@@ -56,13 +56,13 @@ namespace SkyPrint.Services
                 var filePath = "";
                 var comments = item.Comments ?? "";
 
-                var fileExtension = GetModelFileExtension(item.Image.FileName);
-
-                var targetFilename = valuesDict["maket"]
-                    .TrimEnd(GetModelFileExtension(valuesDict["maket"]).ToCharArray());
-
                 if (item.Image != null)
                 {
+                    var targetFilename = valuesDict["maket"]
+                        .TrimEnd(GetModelFileExtension(valuesDict["maket"]).ToCharArray());
+
+                    var fileExtension = GetModelFileExtension(item.Image.FileName);
+
                     filePath = dir + $"\\c_{targetFilename}{fileExtension}";
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
@@ -129,7 +129,7 @@ namespace SkyPrint.Services
             };
         }
 
-        public OperationResult<OrderModelInfoDTO> GetModel(string id)
+        public OperationResult<FileDTO> GetModel(string id)
         {
             var dir = GetOrderDirectory(id);
 
@@ -147,11 +147,11 @@ namespace SkyPrint.Services
                     ? "application"
                     : "image";
 
-                return new OperationResult<OrderModelInfoDTO>()
+                return new OperationResult<FileDTO>()
                 {
                     Success = true,
                     Messages = new[] { "Model was found" },
-                    Data = new OrderModelInfoDTO()
+                    Data = new FileDTO()
                     {
                         FileContent = data,
                         FileName = modelName,
@@ -160,7 +160,7 @@ namespace SkyPrint.Services
                 };
             }
 
-            return new OperationResult<OrderModelInfoDTO>();
+            return new OperationResult<FileDTO>();
         }
 
         // Checks if there is an order catalog and order info in host catalog by recieved id
