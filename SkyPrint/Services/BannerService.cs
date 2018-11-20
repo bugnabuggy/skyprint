@@ -23,7 +23,7 @@ namespace SkyPrint.Services
             _cfg = cfg;
             _fileHost = _cfg.GetValue<string>("FileHost");
             _leftBannersCatalogName = _cfg.GetValue<string>("CatalogWithBanners:Left");
-            _centerBannersCatalogName = _cfg.GetValue<string>("CatalogWithBanners:End");
+            _centerBannersCatalogName = _cfg.GetValue<string>("CatalogWithBanners:Center");
         }
 
         public FileDTO GetLeftBanner()
