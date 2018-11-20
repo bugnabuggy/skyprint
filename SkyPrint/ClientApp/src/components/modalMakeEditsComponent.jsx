@@ -12,6 +12,7 @@ export class MakeEdits extends React.Component {
     const formData = new FormData();
     formData.append('Comments', this.state.text);
     formData.append('Image', this.state.file);
+    formData.append('Status', 1);
     this.props.sendAmendments(this.props.orderId, formData)
   };
   constructor(props) {

@@ -7,6 +7,7 @@ const LOADING_ORDER_DATA = 'LOADING_ORDER_DATA';
 const SHOW_AMENDMENTS_MODAL = 'SHOW_AMENDMENTS_MODAL';
 const ORDER_NOT_FOUND = 'ORDER_NOT_FOUND';
 const SHOW_APPROWED_MODAL = 'SHOW_APPROWED_MODAL';
+const SHOW_SPLASH_SCREEN_BANNER = 'SHOW_SPLASH_SCREEN_BANNER';
 export const initialStateOrder = {
   name: '',
   picture: '',
@@ -20,6 +21,7 @@ export const initialStateOrder = {
   isShowAmendmentsModal: false,
   isOrderNotFound: false,
   isShowApprovedModal: false,
+  isShowBanner: false,
 };
 
 export const actionCreators = {
@@ -43,6 +45,7 @@ export const actionCreators = {
         dispatch({ type: LOAD_ORDER_DATA, data: getDataFromResponse(response) });
         dispatch({ type: SHOW_AMENDMENTS_MODAL, isShow });
         dispatch({ type: SHOW_APPROWED_MODAL, isShow });
+        dispatch({ type: SHOW_SPLASH_SCREEN_BANNER, isShow: true });
       })
       .catch((error) => {
         const isShow = false;
@@ -56,6 +59,9 @@ export const actionCreators = {
   },
   showApprovedModalAction: (isShow) => (dispatch) => {
     dispatch({ type: SHOW_APPROWED_MODAL, isShow });
+  },
+  showSplashScreenBannerAction: (isShow) => (dispatch) => {
+    dispatch({ type: SHOW_SPLASH_SCREEN_BANNER, isShow });
   },
 };
 
@@ -94,6 +100,13 @@ function showApprovedModal(state, action) {
   };
 }
 
+function showSplashScreenBanner(state, action) {
+  return {
+    ...state,
+    isShowBanner: action.isShow,
+  };
+}
+
 export const reducer = (state = initialStateOrder, action) => {
   const reduceObject = {
     [LOAD_ORDER_DATA]: loadOrderData,
@@ -101,6 +114,7 @@ export const reducer = (state = initialStateOrder, action) => {
     [SHOW_AMENDMENTS_MODAL]: showAmendmentsModal,
     [ORDER_NOT_FOUND]: orderNotFound,
     [SHOW_APPROWED_MODAL]: showApprovedModal,
+    [SHOW_SPLASH_SCREEN_BANNER]: showSplashScreenBanner,
   };
 
   return reduceObject.hasOwnProperty(action.type) ? reduceObject[action.type](state, action) : state;
