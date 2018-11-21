@@ -140,7 +140,7 @@ namespace SkyPrint.Services
 
             if (IsModelExistByInfo(modelName, dir))
             {
-                var fileExtension = GetModelFileExtension(modelName);
+                var fileExtension = GetModelFileExtension($"{dir}\\{modelName}");
                 var data = File.ReadAllBytes($"{dir}\\{modelName}");
 
                 var fileType = fileExtension == "pdf"
@@ -275,9 +275,14 @@ namespace SkyPrint.Services
         {
             try
             {
-                var dir = System.IO.Directory.GetFiles(directory)
-                        .OrderByDescending(x => x)
-                        .FirstOrDefault(x => x.EndsWith("sca"));
+                var hostInfo = new System.IO.DirectoryInfo(directory);
+
+                var dir = hostInfo
+                    .GetFiles()
+                    .Where(x => x.Extension.Equals(".sca"))
+                    .OrderByDescending(x => x.CreationTimeUtc)
+                    .FirstOrDefault()
+                    .FullName;
 
                 return dir;
             }
@@ -333,9 +338,9 @@ namespace SkyPrint.Services
         }
 
         // Returns model file extension
-        private string GetModelFileExtension(string fileName)
+        private string GetModelFileExtension(string fullFileName)
         {
-            var ext = fileName.Split('.', StringSplitOptions.RemoveEmptyEntries).Last();
+            var ext = new System.IO.FileInfo(fullFileName).Extension.TrimStart('.');
 
             return ext;
         }
