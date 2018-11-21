@@ -81,17 +81,20 @@ namespace SkyPrint.Services
         // Returns directory to folder with banners
         private string GetBannersDirectory(string catalogName)
         {
-            var dirs = System.IO.Directory.GetDirectories(_fileHost);
+            var dir = new System.IO.DirectoryInfo($"{_fileHost}\\{catalogName}");
 
-            var dir = dirs.FirstOrDefault(x => x.EndsWith(catalogName));
+            if (dir.Exists)
+            {
+                return dir.FullName;
+            }
 
-            return dir;
+            return null;
         }
 
         // Returns model file extension
-        private string GetBannerFileExtension(string fileName)
+        private string GetBannerFileExtension(string fullFileName)
         {
-            var ext = fileName.Split('.', StringSplitOptions.RemoveEmptyEntries).Last();
+            var ext = new System.IO.FileInfo(fullFileName).Extension.TrimStart('.');
 
             return ext;
         }

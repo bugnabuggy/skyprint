@@ -25,9 +25,14 @@ namespace SkyPrint.Helpers
                 }
             }
 
-            var result = new string(id.SkipLast(id.Length - cutPos).ToArray());
+            var result = id.SkipLast(id.Length - cutPos);
 
-            return result;
+            while (result.Count() > 0 && result.Last() == '_')
+            {
+                result = result.SkipLast(1);
+            }
+
+            return new string(result.ToArray());
         }
 
         // Array of allowed numbers

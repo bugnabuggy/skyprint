@@ -140,7 +140,7 @@ namespace SkyPrint.Services
 
             if (IsModelExistByInfo(modelName, dir))
             {
-                var fileExtension = GetModelFileExtension(modelName);
+                var fileExtension = GetModelFileExtension($"{dir}\\{modelName}");
                 var data = File.ReadAllBytes($"{dir}\\{modelName}");
 
                 var fileType = fileExtension == "pdf"
@@ -213,7 +213,7 @@ namespace SkyPrint.Services
                 result.HasClientAnswer = true;
 
                 var scaDir = GetScaDirectory(directory);
-            
+
                 if (scaDir != null)
                 {
                     var scaData = ParseSca(directory);
@@ -275,9 +275,14 @@ namespace SkyPrint.Services
         {
             try
             {
-                var dir = System.IO.Directory.GetFiles(directory)
-                        .OrderByDescending(x => x)
-                        .FirstOrDefault(x => x.EndsWith("sca"));
+                var hostInfo = new System.IO.DirectoryInfo(directory);
+
+                var dir = hostInfo
+                    .GetFiles()
+                    .Where(x => x.Extension.Equals(".sca"))
+                    .OrderByDescending(x => x.CreationTimeUtc)
+                    .FirstOrDefault()
+                    .FullName;
 
                 return dir;
             }
@@ -319,20 +324,23 @@ namespace SkyPrint.Services
         // Returns an order directory in the host directory by recieved id
         private string GetOrderDirectory(string id)
         {
-            var dirs = System.IO.Directory.GetDirectories(_fileHost);
+            var hostInfo = new System.IO.DirectoryInfo(_fileHost);
 
-            var dir = dirs.FirstOrDefault(x => id.Equals
-            (
-                _idHelper.CutIdBeforeFirstLetter(new String(x.Skip(_fileHost.Length + 1).ToArray()))
-            ));
-
-            return dir;
+            var dirs = hostInfo
+                .GetDirectories()
+                .Where(x => id.Equals
+                (
+                    _idHelper.CutIdBeforeFirstLetter(x.Name)
+                ))
+                .OrderByDescending(x => x.CreationTimeUtc);
+            
+            return dirs.FirstOrDefault().FullName;
         }
 
         // Returns model file extension
-        private string GetModelFileExtension(string fileName)
+        private string GetModelFileExtension(string fullFileName)
         {
-            var ext = fileName.Split('.', StringSplitOptions.RemoveEmptyEntries).Last();
+            var ext = new System.IO.FileInfo(fullFileName).Extension.TrimStart('.');
 
             return ext;
         }
