@@ -27,9 +27,9 @@ namespace SkyPrint.Helpers
 
             var result = id.SkipLast(id.Length - cutPos);
 
-            while (result.Last() == '_')
+            while (result.Count() > 0 && result.Last() == '_')
             {
-                result.SkipLast(1);
+                result = result.SkipLast(1);
             }
 
             return new string(result.ToArray());
