@@ -213,7 +213,7 @@ namespace SkyPrint.Services
                 result.HasClientAnswer = true;
 
                 var scaDir = GetScaDirectory(directory);
-            
+
                 if (scaDir != null)
                 {
                     var scaData = ParseSca(directory);
@@ -319,14 +319,17 @@ namespace SkyPrint.Services
         // Returns an order directory in the host directory by recieved id
         private string GetOrderDirectory(string id)
         {
-            var dirs = System.IO.Directory.GetDirectories(_fileHost);
+            var hostInfo = new System.IO.DirectoryInfo(_fileHost);
 
-            var dir = dirs.FirstOrDefault(x => id.Equals
-            (
-                _idHelper.CutIdBeforeFirstLetter(new String(x.Skip(_fileHost.Length + 1).ToArray()))
-            ));
-
-            return dir;
+            var dirs = hostInfo
+                .GetDirectories()
+                .Where(x => id.Equals
+                (
+                    _idHelper.CutIdBeforeFirstLetter(x.Name)
+                ))
+                .OrderByDescending(x => x.CreationTimeUtc);
+            
+            return dirs.FirstOrDefault().FullName;
         }
 
         // Returns model file extension
