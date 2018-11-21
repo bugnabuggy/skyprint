@@ -18,11 +18,13 @@ export class SplashScreen extends React.Component {
         className="splash-screen"
         onClick={this.props.imageClick}
       >
-        <img
-          src={this.props.image}
-          className="img-thumbnail splash-screen-image"
-          alt=""
-        />
+        <div className="splash-screen-image-container">
+          <img
+            src={this.props.image}
+            className="img-thumbnail splash-screen-image"
+            alt=""
+          />
+        </div>
       </div>
     );
   }

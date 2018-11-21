@@ -50,6 +50,13 @@ main {
 
 .banner {
     background-color: #f1f1f1;
+    width: 200px;
+}
+
+.banner img {
+    object-fit: scale-down;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .number_order {
@@ -158,19 +165,54 @@ main {
     -moz-transition: opacity .3s ease;
     transition: opacity .3s ease;
 }
+.maket-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .maket-image {
-    max-width: 100%;
-    margin-bottom: 30px;
+    max-height: 430px;
+    max-width: 449px;
     cursor: zoom-in;
 }
 
-.splash-screen-image {
+.splash-screen-image, .splash-screen-document {
     cursor: zoom-out;
 }
 
 .splash-screen {
-    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    padding: 10px;
+    background-color: rgba(34, 33, 33, 0.658);
+}
+
+.splash-screen-image-container {
+    margin: auto;
+    max-height: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.splash-screen-image-container img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: scale-down;
+    image-rendering: auto;
+}
+
+.splash-screen-document-container {
+    position: fixed;
+    bottom: 0;
     top: 0;
     left: 0;
     right: 0;
@@ -180,6 +222,24 @@ main {
     align-items: center;
     z-index: 1001;
     background-color: rgba(34, 33, 33, 0.658);
+}
+.document-pdf {
+    overflow: auto;
+    max-height: 430px;
+    cursor: zoom-in;
+}
+
+.document-pdf-page {
+    margin-bottom: 10px;
+}
+
+.document-pdf-page:last-child {
+    margin-bottom: 0;
+}
+
+.splash-screen-document {
+    max-width: 1000px;
+    overflow: auto;
 }
 
 .responsive-modal {
