@@ -1,2 +1,2 @@
-export const baseUrl = 'http://sp.ruteco.com';
+export const baseUrl = 'http://zakaz.499363.ru';
 export const orderDataUrl = `${baseUrl}/api/order/%id%`;

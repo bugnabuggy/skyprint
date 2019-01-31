@@ -330,7 +330,7 @@ namespace SkyPrint.Services
                 .GetDirectories()
                 .Where(x => id.Equals
                 (
-                    _idHelper.CutIdBeforeFirstLetter(x.Name)
+                    _idHelper.CutFirstTwoNumbers(x.Name)
                 ))
                 .OrderByDescending(x => x.CreationTimeUtc);
             

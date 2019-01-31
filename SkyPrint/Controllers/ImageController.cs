@@ -28,7 +28,7 @@ namespace SkyPrint.Controllers
         [Route("{id}")]
         public IActionResult GetOrderImage(string id)
         {
-            id = _idHelper.CutIdBeforeFirstLetter(id);
+            id = _idHelper.CutFirstTwoNumbers(id);
 
             if (!_orderSrv.IsOrderExistById(id))
             {

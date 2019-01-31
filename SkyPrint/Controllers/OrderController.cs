@@ -27,7 +27,7 @@ namespace SkyPrint.Controllers
         [Route("{id}")]
         public IActionResult GetInfo(string id)
         {
-            id = _idHelper.CutIdBeforeFirstLetter(id);
+            id = _idHelper.CutFirstTwoNumbers(id);
 
             if (!_orderSrv.IsOrderExistById(id))
             {
@@ -50,7 +50,7 @@ namespace SkyPrint.Controllers
         [Route("{id}")]
         public async Task<IActionResult> AddOrderEditsAsync(string id, [FromForm]OrderEditFormDTO item)
         {
-            id = _idHelper.CutIdBeforeFirstLetter(id);
+            id = _idHelper.CutFirstTwoNumbers(id);
 
             if (!_orderSrv.IsOrderExistById(id))
             {

@@ -7,6 +7,6 @@ namespace SkyPrint.Helpers
 {
     public interface IIdHelper
     {
-        string CutIdBeforeFirstLetter(string id);
+        string CutFirstTwoNumbers(string id);
     }
 }

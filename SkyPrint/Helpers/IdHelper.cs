@@ -10,9 +10,11 @@ namespace SkyPrint.Helpers
     public class IdHelper: IIdHelper
     {
         // Returns cutted before non-allowed char part of recieved "id"
-        public string CutIdBeforeFirstLetter(string id)
+        public string CutFirstTwoNumbers(string id)
         {
             var allowedChars = GetNumbers().Concat(GetSymbols());
+            var delimiters = GetSymbols().ToList();
+            var numbersCount = 0;
 
             int cutPos = 0;
 
@@ -21,16 +23,24 @@ namespace SkyPrint.Helpers
                 cutPos++;
                 if (id.Length == cutPos)
                 {
+                    if (delimiters.Any(x => x == id[cutPos - 1]))
+                    {
+                        cutPos--;
+                    }
                     break;
+                }
+
+                if (delimiters.Any(x => x == id[cutPos]))
+                {
+                    numbersCount++;
+                    if (numbersCount > 1)
+                    {
+                        break;
+                    }
                 }
             }
 
             var result = id.SkipLast(id.Length - cutPos);
-
-            while (result.Count() > 0 && result.Last() == '_')
-            {
-                result = result.SkipLast(1);
-            }
 
             return new string(result.ToArray());
         }
