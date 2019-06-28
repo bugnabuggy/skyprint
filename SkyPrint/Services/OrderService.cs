@@ -4,6 +4,7 @@ using SkyPrint.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using SkyPrint.Helpers;
@@ -54,21 +55,49 @@ namespace SkyPrint.Services
             try
             {
                 var filePath = "";
+                var zipPath = "";
                 var comments = item.Comments ?? "";
 
-                if (item.Image != null)
+                if (item.Images.Count() > 0)
                 {
                     var targetFilename = valuesDict["maket"]
                         .TrimEnd(GetModelFileExtension(valuesDict["maket"]).ToCharArray());
 
-                    var fileExtension = GetModelFileExtension(item.Image.FileName);
+                    zipPath = dir + $"\\c_{targetFilename}zip";
 
-                    filePath = dir + $"\\c_{targetFilename}{fileExtension}";
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    using (FileStream zipToOpen =
+	                    new FileStream(zipPath, FileMode.Create))
                     {
-                        await item.Image.CopyToAsync(stream);
                     }
+
+                    foreach (var image in item.Images)    
+					{
+						var fileExtension = GetModelFileExtension(image.FileName);
+						filePath = dir + $"\\c_{targetFilename}{fileExtension}";
+
+						using (var stream = new FileStream(filePath, FileMode.Create))
+						{
+							await image.CopyToAsync(stream);
+						}
+
+
+						using (FileStream zipToOpen =
+							new FileStream(zipPath, FileMode.Open))
+						{
+							using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+							{
+								archive.CreateEntryFromFile(filePath, image.FileName);
+							}
+						}
+
+						if (System.IO.File.Exists(filePath))
+						{
+							System.IO.File.Delete(filePath);
+						}
+
+					}
+                   
+
                 }
 
                 var dirs = System.IO.Directory.GetDirectories(_fileHost);
@@ -94,7 +123,7 @@ namespace SkyPrint.Services
                 var content = new[]
                 {
                     "Ответ = " + Responses.GetResponse(item.Status),
-                    "Файл = " + filePath,
+                    "Файл = " + zipPath,
                     "Комментарий = " + comments.Replace("\n", "; ")
                 };
 
