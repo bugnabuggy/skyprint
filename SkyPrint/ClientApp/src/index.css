@@ -339,6 +339,7 @@ main {
 
 .modal-window-wishes {
     display: flex;
+    flex-direction: row;
     padding: 56px 11px 73px 11px;
 }
 
@@ -364,12 +365,14 @@ main {
 
 .fields-container {
     width: 659px;
+    display: flex;
+    flex-direction: column;
 }
 
 .fields-container-2 {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-start;
     width: 291px;
 }
 
@@ -402,6 +405,7 @@ main {
 
 .file-download-link, .file-download-link strong{
     cursor: pointer;
+    /* position: relative; */
 }
 
 .file-download-link input{
@@ -490,3 +494,16 @@ main {
 .header-logo img {
     max-width: max-content;
 }
+
+.modal-flex {
+    display: flex !important;
+}
+
+.close-icon-size {
+    width: 20px;
+    height: 20px;
+    position: fixed;
+    /* position: absolute; */
+    margin-left: 20px;
+}
+

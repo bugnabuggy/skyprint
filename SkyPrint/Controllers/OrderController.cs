@@ -51,7 +51,7 @@ namespace SkyPrint.Controllers
         public async Task<IActionResult> AddOrderEditsAsync(string id, [FromForm]OrderEditFormDTO item)
         {
             id = _idHelper.CutFirstTwoNumbers(id);
-
+            item.Images = Request.Form.Files;
             if (!_orderSrv.IsOrderExistById(id))
             {
                 return NotFound("Order not found");

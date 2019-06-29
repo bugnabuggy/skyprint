@@ -10,6 +10,6 @@ namespace SkyPrint.Models
     {
         public string Comments { get; set; }
         public int Status { get; set; }
-        public IFormFile Image { get; set; }
+        public IEnumerable<IFormFile> Images { get; set; }
     }
 }
