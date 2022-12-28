@@ -1,6 +1,6 @@
 export function parsingUrl(url) {
   const tempArray = url.split('&');
-  let idOrder = 'fg4h5';
+  let idOrder = '';
   tempArray.forEach( item => {
     if (item.indexOf('zakaz') >= 0)
     {

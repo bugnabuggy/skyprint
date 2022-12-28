@@ -120,11 +120,18 @@ namespace SkyPrint.Services
                     fileTW.WriteLine(valuesDict["name"]);
                 }
 
+                var feedback = item.Feedback ?? "";
+
                 var content = new[]
                 {
                     "Ответ = " + Responses.GetResponse(item.Status),
                     "Файл = " + zipPath,
-                    "Комментарий = " + comments.Replace("\n", "; ")
+                    "Комментарий = " + comments.Replace("\n", "; "),
+                    "Оценка = " + item.Rating,
+                    "Отзыв = " + feedback.Replace("\n", "; "),
+                    "Нравится дизайнер  = " + (item.LikeDesigner ? "Да" : "Нет"),
+                    "Выбранный макет = " + item.SelectedFrame ?? ""
+
                 };
 
                 using (TextWriter fileTW = new StreamWriter($"{dir}\\{dateTimeStamp}.sca"))
@@ -363,7 +370,7 @@ namespace SkyPrint.Services
                 ))
                 .OrderByDescending(x => x.CreationTimeUtc);
             
-            return dirs.FirstOrDefault().FullName;
+            return dirs.FirstOrDefault()?.FullName;
         }
 
         // Returns model file extension

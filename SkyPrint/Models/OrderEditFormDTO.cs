@@ -10,6 +10,10 @@ namespace SkyPrint.Models
     {
         public string Comments { get; set; }
         public int Status { get; set; }
+        public string SelectedFrame { get; set; }
+        public byte Rating { get; set; }
+        public string Feedback{ get; set; }
+        public bool LikeDesigner{ get; set; }
         public IEnumerable<IFormFile> Images { get; set; }
     }
 }

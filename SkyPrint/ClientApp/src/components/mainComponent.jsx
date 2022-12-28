@@ -3,13 +3,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { actionCreators } from '../store/order';
 import { Banner } from './bannerComponent';
-import { InfoField } from './infoFieldComponent';
+
 import { Spinner } from './spinnerComponent';
 import { parsingUrl } from '../service/helper';
 import { OrderNotFound } from './orderNotFoundComponent';
-import { MakeEdits } from './modalMakeEditsComponent';
-import { ArrowComponent } from './arrowComponent';
-import { ModalApproved } from './modalApproved';
+import { OrderInfo } from './orderInfo';
+
 
 class Main extends React.Component {
   closeAmendments = () => {
@@ -18,71 +17,47 @@ class Main extends React.Component {
   closeApprove = () => {
     this.props.showApprovedModalAction(false);
   };
+  closeFeedback = () => {
+    this.props.showFeedbackModalAction(false);
+  };
   componentDidMount() {
     if (this.props.routing.location.search) {
       this.props.loadDataAction(parsingUrl(this.props.routing.location.search));
     }
   }
+
   render() {
-    if (this.props.order.isOrderNotFound) {
-      return (
-        <main>
-          <React.Fragment>
-            <Banner />
-            <OrderNotFound
-              name="Данный заказ не найден"
-            />
-          </React.Fragment>
-        </main>
-      )
-    } else {
-      return (
-        <main>
-          <Banner />
-          {this.props.routing.location.search ?
-            this.props.order.isLoading ?
-              (
-                <Spinner />
-              )
-              :
-              (
-                <React.Fragment>
-                  <div>
-                    <InfoField
-                      order={this.props.order}
-                      orderId={parsingUrl(this.props.routing.location.search)}
-                      sendAmendments={this.props.sendAmendmentsAction}
-                      showAmendmentsModalAction={this.props.showAmendmentsModalAction}
-                      showApprovedModalAction={this.props.showApprovedModalAction}
-                      showSplashScreenBannerAction={this.props.showSplashScreenBannerAction}
-                    />
-                    {this.props.order.isShowAmendmentsModal && <MakeEdits
-                      showAmendments={this.props.order.isShowAmendmentsModal}
-                      orderId={parsingUrl(this.props.routing.location.search)}
-                      closeModal={this.closeAmendments}
-                      sendAmendments={this.props.sendAmendmentsAction}
-                    />}
-                    {this.props.order.isShowApprovedModal && <ModalApproved
-                      show={this.props.order.isShowApprovedModal}
-                      orderId={parsingUrl(this.props.routing.location.search)}
-                      sendAmendments={this.props.sendAmendmentsAction}
-                      closeApprove={this.closeApprove}
-                    />}
-                  </div>
-                  <ArrowComponent />
-                </React.Fragment>
-              )
-            :
-            (
-              <OrderNotFound
-                name="Заказ не найден"
-              />
-            )
-          }
-        </main>
-      );
-    }
+
+    const orderData = this.props.order.isLoading && this.props.routing.location.search
+      ? <Spinner />
+      : <OrderInfo
+        order={this.props.order}
+        orderId={parsingUrl(this.props.routing.location.search)}
+        sendAmendments={this.props.sendAmendmentsAction}
+        showAmendmentsModalAction={this.props.showAmendmentsModalAction}
+        showApprovedModalAction={this.props.showApprovedModalAction}
+        showFeedbackModalAction={this.props.showFeedbackModalAction}
+        showSplashScreenBannerAction={this.props.showSplashScreenBannerAction}
+        closeModal={this.closeAmendments}
+        closeApprove={this.closeApprove}
+        closeFeedback={this.closeFeedback}
+      />
+
+    const content = this.props.order.isOrderNotFound || !this.props.routing.location.search
+      ? <OrderNotFound
+        name="Данный заказ не найден"
+      />
+      : orderData
+
+    return (<main>
+      <React.Fragment>
+        <Banner />
+        {content}
+      </React.Fragment>
+    </main>)
   }
+
+
 }
 
 export default connect(

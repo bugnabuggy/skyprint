@@ -3,16 +3,15 @@ import Modal from 'react-awesome-modal';
 
 export class ModalApproved extends React.Component {
   handleApprove = (event) => {
-    const formData = new FormData();
-    formData.append('Status', 0);
-      this.props.sendAmendments(this.props.orderId, formData);
+    this.props.showFeedbackModalAction(true);
   };
+
   render() {
     return (
       <Modal
         visible={this.props.show}
         width="684"
-        height="365"
+
         effect="fadeInDown"
         onClickAway={this.props.closeApprove}
       >
@@ -26,7 +25,7 @@ export class ModalApproved extends React.Component {
         </div>
         <div className="modal-approve-buttons">
           <div
-          className="approve-button approve-button-yes"
+            className="approve-button approve-button-yes"
             onClick={this.handleApprove}
           >
             <span className="o-btn-primary o-btn-info-field modal-approve-button">
@@ -34,7 +33,7 @@ export class ModalApproved extends React.Component {
             </span>
           </div>
           <div
-          className="approve-button approve-button-cancel"
+            className="approve-button approve-button-cancel"
             onClick={this.props.closeApprove}
           >
             <span className="o-btn-primary o-btn-info-field modal-approve-button">

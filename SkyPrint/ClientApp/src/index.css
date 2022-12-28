@@ -5,6 +5,23 @@
     }
 }
 
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333333;
+    background-color: #fff;
+}
+
 #root {
     min-width: 1280px;
     height: 100%;
@@ -177,6 +194,16 @@ main {
     cursor: zoom-in;
 }
 
+.margin-box {
+    margin: 20px 10px 0 10px;
+    cursor:auto !important;
+    min-height: 300px;
+}
+
+.cursor-normal {
+    cursor: default;
+}
+
 .splash-screen-image, .splash-screen-document {
     cursor: zoom-out;
 }
@@ -340,7 +367,7 @@ main {
 .modal-window-wishes {
     display: flex;
     flex-direction: row;
-    padding: 56px 11px 73px 11px;
+    padding: 23px 11px 23px 11px;
 }
 
 .text-field-container textarea{
@@ -497,6 +524,9 @@ main {
 
 .modal-flex {
     display: flex !important;
+    flex-direction: column;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 .close-icon-size {
@@ -507,3 +537,45 @@ main {
     margin-left: 20px;
 }
 
+.modal-feedback {
+    display: flex;
+    flex-direction: column;
+    
+    padding: 15px;
+}
+
+.modal-feedback > div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 10px;
+    align-items: center;
+}
+
+.modal-feedback > div > label {
+    text-align: right;   
+    width: 50%;
+    padding-right: 20px;
+}
+
+.modal-feedback > div > input, textarea {
+  width: 45%;   
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  
+  padding: 10px;
+  
+}
+
+.modal-feedback > div > input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+}
+
+.modal-feedback > button {
+    border: none;
+    margin-top: 20px;
+    width: 250px;
+    align-self: center;
+
+}
