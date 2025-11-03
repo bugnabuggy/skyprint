@@ -8,7 +8,6 @@ import { ConnectedRouter } from 'react-router-redux';
 import { createBrowserHistory } from 'history';
 import configureStore from './store/configureStore';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
 import { initialStateOrder } from './store/order';
 
 // Create browser history to use in the Redux store
@@ -31,4 +30,3 @@ ReactDOM.render(
   </Provider>,
   rootElement);
 
-registerServiceWorker();
